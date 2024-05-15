@@ -3,6 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../Model/User');
+const Token = require('../Model/Token');
 const router = express.Router();
 require('dotenv').config();
 
@@ -45,6 +46,7 @@ router.post('/login', async (req, res) => {
             return res.send({ message: 'Invalid username/password' });
         }
         const token = generateToken(user);
+        await Token.create({ token, userId: user._id }); // Save token string and user ID
         res.send({ token });
     } catch (error) {
         console.error('Invalid username/password', error);
