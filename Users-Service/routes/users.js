@@ -2,8 +2,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../Model/User');
-const Token = require('../Model/Token');
+const User = require('../../Users-Service/Model/User');
 const router = express.Router();
 require('dotenv').config();
 
@@ -46,7 +45,6 @@ router.post('/login', async (req, res) => {
             return res.send({ message: 'Invalid username/password' });
         }
         const token = generateToken(user);
-        await Token.create({ token, userId: user._id }); // Save token string and user ID
         res.send({ token });
     } catch (error) {
         console.error('Invalid username/password', error);
@@ -70,12 +68,14 @@ router.get('/verify-token', (req, res) => {
 });
 
 // Token refresh route
-router.post('/refresh-token', (req, res) => {
+router.post('/refresh-token', async (req, res) => {
     const refreshToken = req.body.token;
     if (!refreshToken) {
         return res.status(401).json({ error: 'No refresh token provided' });
     }
-    const newToken = jwt.sign({}, secretKey, { expiresIn: '1h' });
+    const decoded = jwt.decode(refreshToken);
+    const { userId, username } = decoded;
+    const newToken = jwt.sign({ userId, username }, secretKey, { expiresIn: '1h' });
     res.json({ newToken });
 });
 

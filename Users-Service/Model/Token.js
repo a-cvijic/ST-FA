@@ -5,6 +5,6 @@ const tokenSchema = new mongoose.Schema({
     expiration: Date
 });
 
-const Token = mongoose.model('Token', tokenSchema, 'tokens'); // Assuming the collection name is Tokens
+const Token = mongoose.model('Token', tokenSchema, 'tokens');
 
 module.exports = Token;
