@@ -7,5 +7,5 @@ const exerciseSchema = new mongoose.Schema({
   type: String,
   difficulty: String
 });
-const Exercise = mongoose.model('Exercise', exerciseSchema);
+const Exercise = mongoose.model('Exercise', exerciseSchema, 'excercises');
 module.exports = Exercise;

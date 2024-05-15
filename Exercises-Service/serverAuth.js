@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('./Model/User');
+const User = require('../Users-Service/Model/User');
 require('dotenv').config();
 const cors = require('cors');
 
