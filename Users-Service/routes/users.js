@@ -10,8 +10,24 @@ const secretKey = process.env.SECRET_KEY;
 
 // Function to generate token
 function generateToken(user) {
-    return jwt.sign({ userId: user._id, username: user.username }, secretKey, { expiresIn: '15m' });
+    return jwt.sign({ userId: user._id, username: user.username }, secretKey, { expiresIn: '15s' });
 }
+
+router.get('/getUsername', (req, res) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; // Extract token from headers
+    if (!token) {
+        return res.status(401).json({ message: 'Token not provided' });
+    }
+
+    try {
+        const decodedToken = jwt.decode(token);
+        const username = decodedToken.username;
+        res.json({ username });
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 
 // Registration route
 router.post('/register', async (req, res) => {

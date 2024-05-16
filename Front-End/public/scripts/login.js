@@ -24,7 +24,7 @@ const handleFormSubmit = async (event) => {
     if (token) {
         localStorage.setItem('token', token);
         console.log('Token accepted and stored:', token);
-        window.location.href = 'home.html'; // Redirect to home page
+        window.location.href = 'homepage.html'; // Redirect to home page
     } else {
         alert('Incorrect username or password. Please try again.');
     }
