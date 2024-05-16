@@ -27,6 +27,8 @@ const refreshToken = async (oldToken) => {
 };
 
 // Function to fetch all exercises from the server
+// Function to fetch all exercises from the server
+// Function to fetch all exercises from the server
 const getAllExercises = async (token) => {
   try {
       const response = await axios.get(`${baseURL}/`, {
@@ -39,18 +41,34 @@ const getAllExercises = async (token) => {
       const exercisesContainer = document.getElementById('exercises-container');
       exercisesContainer.innerHTML = '';
       exercises.forEach(exercise => {
-          const exerciseElement = document.createElement('div');
-          exerciseElement.classList.add('exercise');
-          exerciseElement.innerHTML = `
-          <h3>${exercise.name}</h3>
-          ID: ${exercise._id}<br>
-          Description: ${exercise.description}<br>
-          Duration: ${exercise.duration} minutes<br>
-          Calories: ${exercise.calories}<br>
-          Type: ${exercise.type}<br>
-          Difficulty: ${exercise.difficulty}.<br>
-      `;
-          exercisesContainer.appendChild(exerciseElement);
+          const exerciseCard = document.createElement('div');
+          exerciseCard.classList.add('exercise-card'); // Add a class for styling
+
+          const exerciseHeader = document.createElement('div');
+          exerciseHeader.classList.add('exercise-header'); // Add a class for styling
+          
+          // Create an anchor tag for the exercise name
+          const exerciseNameLink = document.createElement('a');
+          exerciseNameLink.href = `exercise_${exercise.name.replace(/\s/g, '_').toLowerCase()}.html`; // Example: exercise_potisk_s_klopi.html
+          exerciseNameLink.classList.add('exercise-name-link'); // Add a class for styling
+          exerciseNameLink.textContent = exercise.name;
+          
+          exerciseHeader.appendChild(exerciseNameLink);
+          exerciseCard.appendChild(exerciseHeader);
+          
+          const exerciseBody = document.createElement('div');
+          exerciseBody.classList.add('exercise-body'); // Add a class for styling
+          exerciseBody.innerHTML = `
+              <p>ID: ${exercise._id}</p>
+              <p>Description: ${exercise.description}</p>
+              <p>Duration: ${exercise.duration} minutes</p>
+              <p>Calories: ${exercise.calories}</p>
+              <p>Type: ${exercise.type}</p>
+              <p>Difficulty: ${exercise.difficulty}</p>
+          `;
+          exerciseCard.appendChild(exerciseBody);
+
+          exercisesContainer.appendChild(exerciseCard);
       });
       
       return exercises; // Return the fetched exercises data
@@ -59,6 +77,8 @@ const getAllExercises = async (token) => {
       return null; // Return null if there's an error
   }
 };
+
+
 
 const verifyTokenAndFetchExercises = async () => {
   const token = localStorage.getItem('token'); // Get token from local storage

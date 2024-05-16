@@ -10,7 +10,7 @@ const secretKey = process.env.SECRET_KEY;
 
 // Function to generate token
 function generateToken(user) {
-    return jwt.sign({ userId: user._id, username: user.username }, secretKey, { expiresIn: '15s' });
+    return jwt.sign({ userId: user._id, username: user.username }, secretKey, { expiresIn: '15m' });
 }
 
 router.get('/getUsername', (req, res) => {
