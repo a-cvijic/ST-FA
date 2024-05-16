@@ -1,0 +1,27 @@
+.exercise-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .exercise-table th, .exercise-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .exercise-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+  
+  .exercise-table td {
+    text-align: center;
+  }
+  
+  .exercise-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .exercise-table tr:hover {
+    background-color: #ddd;
+  }
+  
