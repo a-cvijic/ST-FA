@@ -16,21 +16,32 @@ function generateToken(user) {
 // Registration route
 router.post('/register', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        if (!password || password.length < 8) {
-            return res.json({ message: 'Password must be at least 8 characters long' });
+        const { username, email, password } = req.body;
+        const existingUsername = await User.findOne({ username });
+        if (existingUsername) {
+            return res.status(400).json({ message: 'Username is already taken' });
         }
-        const hashedPassword = await bcrypt.hash(req.body.password, 10); 
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+            return res.status(400).json({ message: 'Email is already registered' });
+        }
+        if (!password || password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({
-            username: req.body.username,
-            password: hashedPassword 
+            username,
+            email,
+            password: hashedPassword
         });
         await user.save();
-        res.send(user);
+        res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-        res.send(error);
+        console.error('Error registering user:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
 
 // Login route
 router.post('/login', async (req, res) => {
