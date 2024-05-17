@@ -49,7 +49,7 @@ const getAllExercises = async (token) => {
           
           // Create an anchor tag for the exercise name
           const exerciseNameLink = document.createElement('a');
-          exerciseNameLink.href = `exercise_${exercise.name.replace(/\s/g, '_').toLowerCase()}.html`; // Example: exercise_potisk_s_klopi.html
+          exerciseNameLink.href = `exercises/exercise_${exercise.name.replace(/\s/g, '_').toLowerCase()}.html?exerciseId=${exercise._id}`; // Example: exercise_potisk_s_klopi.html
           exerciseNameLink.classList.add('exercise-name-link'); // Add a class for styling
           exerciseNameLink.textContent = exercise.name;
           

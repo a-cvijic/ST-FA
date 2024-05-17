@@ -39,14 +39,14 @@ const getExerciseById = async (exerciseId, token) => {
                 Authorization: `Bearer ${token}`
             }
         });
-        return response.data; // Return the exercise data
+        return response.data;
     } catch (error) {
-        console.error('Error fetching exercise by ID:', error);
-        return null; // Return null if there's an error
+        console.error('Napaka pri pridobivanju vaje:', error);
+        return null;
     }
 };
 
-// Function to fetch all exercises from the server
+// pridobivanje vseh vaj iz baze
 const getAllExercises = async (token) => {
     try {
         const response = await axios.get(`${baseURL}/`, {
@@ -54,17 +54,14 @@ const getAllExercises = async (token) => {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log('Response:', response.data); // Log the response data
+        console.log('Response:', response.data); // logiranje
         const exercises = response.data;
         const exercisesContainer = document.getElementById('exercises-container');
         exercisesContainer.innerHTML = '';
-  
-        // Create a table element
+        // dinamična izgradnja tabele
         const table = document.createElement('table');
         table.classList.add('exercise-table');
-  
-        // Create table header
-        const tableHeader = document.createElement('tr');
+        const tableHeader = document.createElement('tr');//glava tabele
         tableHeader.innerHTML = `
             <th>Name</th>
             <th>ID</th>
@@ -76,9 +73,7 @@ const getAllExercises = async (token) => {
             <th>Actions</th>
         `;
         table.appendChild(tableHeader);
-  
-        // Loop through exercises to create table rows
-        exercises.forEach(exercise => {
+        exercises.forEach(exercise => { // grem skozi tabele, da naredim vrstice
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${exercise.name}</td>
@@ -98,14 +93,14 @@ const getAllExercises = async (token) => {
   
         exercisesContainer.appendChild(table);
         
-        return exercises; // Return the fetched exercises data
+        return exercises; // vrnem vaje
     } catch (error) {
-        console.error('Error fetching exercises:', error);
-        return null; // Return null if there's an error
+        console.error('Napaka pri pridobivanju vaj:', error);
+        return null;
     }
   };
 
-// Function to delete an exercise by ID
+// Brisanje vaje glede na id
 const deleteExercise = async (exerciseId, token) => {
     try {
       const response = await axios.delete(`${baseURL}${exerciseId}`, {
@@ -113,13 +108,14 @@ const deleteExercise = async (exerciseId, token) => {
           Authorization: `Bearer ${token}`
         }
       });
-      console.log('Exercise deleted:', response.data);
+      console.log('Vaja izbrisana:', response.data);
       await getAllExercises(token);
     } catch (error) {
-      console.error('Error deleting exercise:', error);
+      console.error('Napaka pri brisanju vaje:', error);
     }
   };
 
+  // Posodabljanje vaje
   const updateExercise = async (exerciseId, exerciseData, token) => {
     try {
       const response = await axios.put(`${baseURL}${exerciseId}`, exerciseData, {
@@ -134,34 +130,127 @@ const deleteExercise = async (exerciseId, token) => {
     }
   };
   
+  // ustvarjanje vaje
+  const createExercise = async (exerciseData, token) => {
+    try {
+      const response = await axios.post(`${baseURL}`, exerciseData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      return null;
+    }
+  };
+  
 
 const verifyTokenAndFetchExercises = async () => {
-  const token = localStorage.getItem('token'); // Get token from local storage
+  const token = localStorage.getItem('token'); // pridobimo token iz lokalne shrambe
   if (token) {
     try {
-      const isValid = await checkTokenValidity(token); // Check if token is valid
+      const isValid = await checkTokenValidity(token); // preverjanje veljavnosti tokena
       if (!isValid) {
-        const newToken = await refreshToken(token); // Refresh token
+        const newToken = await refreshToken(token); // osvežimo, če ni veljaven
         if (newToken) {
-          localStorage.setItem('token', newToken); // Update token in local storage
-          console.log('New token:', newToken);
-          const exercises = await getAllExercises(newToken); // Fetch exercises with refreshed token
-          saveExercisesToLocal(exercises); // Save exercises to local storage
+          localStorage.setItem('token', newToken); // posodobimo lokalno shrambo
+          console.log('Nov token:', newToken);
+          const exercises = await getAllExercises(newToken); // pridobim vaje z osveženim tokenom
+          saveExercisesToLocal(exercises); // vaje shranimo v lokalno shrambo
         } else {
-          console.error('Failed to refresh token');
+          console.error('Neuspešno posodabljanje tokena');
         }
       } else {
-        console.log('Token is valid');
-        const exercises = await getAllExercises(token); // Fetch exercises with existing token
+        console.log('Token je veljaven');//če je token veljaven (preskočimo refresh in izvedemo fetch in shranjevanje v lokalno bazo)
+        const exercises = await getAllExercises(token);
         console.log(exercises);
-        saveExercisesToLocal(exercises); // Save exercises to local storage
+        saveExercisesToLocal(exercises);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Napaka:', error);
     }
   } else {
-    console.error('No token found in local storage');
+    console.error('V lokalni shrambi ni tokena');
   }
+};
+
+const showPostForm = () => {
+    const formContainer = document.getElementById('post-form-container');//modal za vstavljanje vaje
+    formContainer.innerHTML = `
+        <h2>New Exercise</h2>
+        <form id="post-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+            <label for="duration">Duration (minutes):</label>
+            <input type="number" id="duration" name="duration" required>
+            <label for="calories">Calories:</label>
+            <input type="number" id="calories" name="calories" required>
+            <label for="type">Type:</label>
+            <input type="text" id="type" name="type" required>
+            <label for="difficulty">Difficulty:</label>
+            <input type="text" id="difficulty" name="difficulty" required>
+            <button type="submit">Create Exercise</button>
+        </form>
+    `;
+    const postForm = document.getElementById('post-form');
+    postForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const isValid = await checkTokenValidity(token);
+                if (!isValid) {
+                    const newToken = await refreshToken(token);
+                    if (newToken) {
+                        localStorage.setItem('token', newToken);
+                        console.log('Nov token:', newToken);
+                        const newExerciseData = {
+                            name: document.getElementById('name').value,
+                            description: document.getElementById('description').value,
+                            duration: document.getElementById('duration').value,
+                            calories: document.getElementById('calories').value,
+                            type: document.getElementById('type').value,
+                            difficulty: document.getElementById('difficulty').value
+                        };
+                        await createExercise(newExerciseData, newToken);
+                        await verifyTokenAndFetchExercises();
+                    } else {
+                        console.error('Napaka pri posodabljanju tokena');
+                    }
+                } else {
+                    console.log('Token je veljaven');
+                    const newExerciseData = {
+                        name: document.getElementById('name').value,
+                        description: document.getElementById('description').value,
+                        duration: document.getElementById('duration').value,
+                        calories: document.getElementById('calories').value,
+                        type: document.getElementById('type').value,
+                        difficulty: document.getElementById('difficulty').value
+                    };
+                    await createExercise(newExerciseData, token);
+                    await verifyTokenAndFetchExercises();
+                }
+                location.reload();
+            } catch (error) {
+                console.error('Napaka:', error);
+            }
+        } else {
+            console.error('V lokalni shrambi ni tokena');
+        }
+    });
+    // Show the modal
+    formContainer.style.display = 'block';
+};
+
+// Event listener for the new exercise button
+document.getElementById('dodaj-vajo').addEventListener('click', showPostForm);
+
+const closeModal = () => {
+    document.getElementById('edit-form-container').style.display = 'none';
+    document.getElementById('post-form-container').style.display = 'none';
 };
 
 const showEditForm = async (exerciseId) => {
@@ -197,7 +286,7 @@ const showEditForm = async (exerciseId) => {
                         const newToken = await refreshToken(token);
                         if (newToken) {
                             localStorage.setItem('token', newToken);
-                            console.log('New token:', newToken);
+                            console.log('Nov token:', newToken);
                             // Retrieve the updated exercise data here
                             const updatedExerciseData = {
                                 name: document.getElementById('name').value,
@@ -210,11 +299,10 @@ const showEditForm = async (exerciseId) => {
                             await updateExercise(exerciseId, updatedExerciseData, newToken);
                             await verifyTokenAndFetchExercises();
                         } else {
-                            console.error('Failed to refresh token');
+                            console.error('Neuspešno posodabljanje tokena');
                         }
                     } else {
-                        console.log('Token is valid');
-                        // Retrieve the updated exercise data here
+                        console.log('Token je veljaven');
                         const updatedExerciseData = {
                             name: document.getElementById('name').value,
                             description: document.getElementById('description').value,
@@ -225,16 +313,18 @@ const showEditForm = async (exerciseId) => {
                         };
                         await updateExercise(exerciseId, updatedExerciseData, token);
                         await verifyTokenAndFetchExercises();
+                        location.reload();
                     }
                 });
             } else {
-                console.error('Exercise not found');
+                console.error('Vaja ni bila najdena');
             }
+            location.reload();
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Napaka:', error);
         }
     } else {
-        console.error('No token found in local storage');
+        console.error('V lokalni shrambi ni tokena');
     }
 };
 
@@ -249,20 +339,20 @@ const verifyTokenAndGetExerciseById = async (exerciseId) => {
                 const newToken = await refreshToken(token);
                 if (newToken) {
                     localStorage.setItem('token', newToken);
-                    console.log('New token:', newToken);
+                    console.log('Nov token:', newToken);
                     await showEditForm(exerciseId);
                 } else {
-                    console.error('Failed to refresh token');
+                    console.error('Neuspešno posodabljanje tokena');
                 }
             } else {
-                console.log('Token is valid');
+                console.log('Token je veljaven');
                 await showEditForm(exerciseId);
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Napaka:', error);
         }
     } else {
-        console.error('No token found in local storage');
+        console.error('V lokalni shrambi ni tokena');
     }
 };
 
@@ -276,20 +366,20 @@ const verifyTokenAndDeleteExercises = async (exerciseId) => {
                 const newToken = await refreshToken(token); // Refresh token
                 if (newToken) {
                     localStorage.setItem('token', newToken); // Update token in local storage
-                    console.log('New token:', newToken);
+                    console.log('Nov token:', newToken);
                     await deleteExercise(exerciseId, newToken); // Delete exercise with refreshed token
                 } else {
-                    console.error('Failed to refresh token');
+                    console.error('Neuspešno posodabljanje tokena');
                 }
             } else {
-                console.log('Token is valid');
+                console.log('Token je veljaven');
                 await deleteExercise(exerciseId, token); // Delete exercise with existing token
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Napaka:', error);
         }
     } else {
-        console.error('No token found in local storage');
+        console.error('V lokalni shrambi ni tokena');
     }
 };
 
@@ -301,8 +391,8 @@ function saveExercisesToLocal(exercises) {
   try {
     // Convert exercises to JSON and store in local storage
     localStorage.setItem('exercises', JSON.stringify(exercises));
-    console.log('Exercises saved to local storage.');
+    console.log('Vaje shranjene v lokalno shrambo.');
   } catch (error) {
-    console.error('Error saving exercises to local storage:', error);
+    console.error('Napaka pri shranjevanju vaj v lokalno shrambo:', error);
   }
 }
