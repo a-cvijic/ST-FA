@@ -15,9 +15,10 @@ function authenticateToken(req, res, next) {
     jwt.verify(token, secretKey, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
+        console.log(req.user);
         next();
     });
-  }
+  };
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
