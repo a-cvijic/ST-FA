@@ -56,6 +56,15 @@ main {
     border-radius: 10px; /* Add rounded corners to the div elements */
 }
 
+img.centered {
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+    height: auto;
+    width: 360px; /* Fixed width */
+    height: 360px; /* Fixed height */
+}
+
 
 /* Media queries for responsiveness */
 @media screen and (max-width: 600px) {
