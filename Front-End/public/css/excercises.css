@@ -1,4 +1,28 @@
-/* styles.css */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px; /* Full viewport height to center vertically */
+}
+
+.buttonAll {
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    background-color: #007BFF; /* Blue color */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    border: none; /* Optional: remove default border */
+    cursor: pointer; /* Add pointer cursor on hover */
+}
+
+.buttonAll:hover {
+    background-color: #0056b3; /* Darker blue color on hover */
+}
+
+
 
 a {
     color: black; /* Change the text color to black */
