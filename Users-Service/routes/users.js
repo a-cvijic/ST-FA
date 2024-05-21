@@ -10,7 +10,7 @@ const secretKey = process.env.SECRET_KEY;
 
 // Function to generate token
 function generateToken(user) {
-    return jwt.sign({ userId: user._id, username: user.username }, secretKey, { expiresIn: '15s' });
+    return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '15s' });
 }
 
 router.get('/getUsername', (req, res) => {
@@ -21,8 +21,8 @@ router.get('/getUsername', (req, res) => {
 
     try {
         const decodedToken = jwt.decode(token);
-        const username = decodedToken.username;
-        res.json({ username });
+        const name = decodedToken.name;
+        res.json({ name });
     } catch (error) {
         console.error('Error decoding token:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -32,11 +32,7 @@ router.get('/getUsername', (req, res) => {
 // Registration route
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        const existingUsername = await User.findOne({ username });
-        if (existingUsername) {
-            return res.status(400).json({ message: 'Username is already taken' });
-        }
+        const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
         const existingEmail = await User.findOne({ email });
         if (existingEmail) {
             return res.status(400).json({ message: 'Email is already registered' });
@@ -46,9 +42,14 @@ router.post('/register', async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({
-            username,
+            name,
+            surname,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            birthdate,
+            gender,
+            height,
+            weight
         });
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
@@ -62,20 +63,20 @@ router.post('/register', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { name, password } = req.body;
+        const user = await User.findOne({ name });
         if (!user) {
-            return res.send({ message: 'Invalid username/password' });
+            return res.status(401).send({ message: 'Invalid username/password' });
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.send({ message: 'Invalid username/password' });
+            return res.status(401).send({ message: 'Invalid username/password' });
         }
         const token = generateToken(user);
         res.send({ token });
     } catch (error) {
-        console.error('Invalid username/password', error);
-        res.send({ message: 'Invalid username/password' });
+        console.error('Error during login:', error);
+        res.status(500).send({ message: 'Internal Server Error' });
     }
 });
 
@@ -101,9 +102,85 @@ router.post('/refresh-token', async (req, res) => {
         return res.status(401).json({ error: 'No refresh token provided' });
     }
     const decoded = jwt.decode(refreshToken);
-    const { userId, username } = decoded;
-    const newToken = jwt.sign({ userId, username }, secretKey, { expiresIn: '1h' });
+    const { userId, name } = decoded;
+    const newToken = jwt.sign({ userId, name }, secretKey, { expiresIn: '1h' });
     res.json({ newToken });
 });
+
+router.get('/', async (req, res) => {
+    try {
+      const users = await User.find();
+      res.json(users);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+  
+  async function getUser(req, res, next) {
+    let user;
+    try {
+      user = await User.findById(req.params.id);
+      if (user == null) {
+        return res.status(404).json({ message: 'Cannot find user'});
+      }
+    } catch (err) {
+      return res.status(500).json({ message: err.message });
+    }
+  
+    res.user = user;
+    next();
+  };
+
+  router.post('/', async (req, res) => {
+    const user = new User({
+      _id: req.body._id,
+      name: req.body.name,
+      surname: req.body.surname,
+      email: req.body.email,
+      password: req.body.password,
+      birthdate: req.body.birthdate,
+      gender: req.body.gender,
+      height: req.body.height,
+      weight: req.body.weight
+    });
+  
+    try {
+      const newUser = await user.save();
+      res.status(201).json(newUser);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });
+  
+  
+  router.get('/:id', getUser, (req, res) => {
+    res.json(res.user);
+  });
+  
+  router.put('/:id', getUser, async (req, res) => {
+  if (req.body.name != null) {
+     res.user.name = req.body.name;
+     }
+  try {
+  const updatedUser = await res.user.save();
+  res.json(updatedUser);
+  } catch (err) {
+  res.status(400).json({ message: err.message });
+  }
+  });
+  
+  router.delete('/:id', async (req, res) => {
+    try {
+      const result = await User.findByIdAndDelete(req.params.id);
+      if (!result) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      console.log(`User ${req.params.id} deleted successfully.`);
+      res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+      console.error(`Error deleting user: ${err.message}`);
+      res.status(500).json({ message: err.message });
+    }
+  });
 
 module.exports = router;

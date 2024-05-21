@@ -1,5 +1,6 @@
 const express = require('express');
 const Exercise = require('../Model/Exercise');
+const ExerciseUser = require('../Model/ExerciseUser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
@@ -23,6 +24,16 @@ function authenticateToken(req, res, next) {
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const exercise = new Exercise(req.body);
+    await exercise.save();
+    res.send(exercise);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.post('/excercise/:id', authenticateToken, async (req, res) => {
+  try {
+    const exercise = new ExerciseUser(req.body);
     await exercise.save();
     res.send(exercise);
   } catch (error) {

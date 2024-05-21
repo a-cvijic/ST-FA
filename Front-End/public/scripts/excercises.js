@@ -27,8 +27,6 @@ const refreshToken = async (oldToken) => {
 };
 
 // Function to fetch all exercises from the server
-// Function to fetch all exercises from the server
-// Function to fetch all exercises from the server
 const getAllExercises = async (token) => {
   try {
       const response = await axios.get(`${baseURL}/`, {
@@ -67,10 +65,15 @@ const getAllExercises = async (token) => {
               <p>Difficulty: ${exercise.difficulty}</p>
           `;
           exerciseCard.appendChild(exerciseBody);
+          // Create "Add to Favourites" button
+          const addToFavouritesButton = document.createElement('button');
+          addToFavouritesButton.textContent = 'Add to Favourites';
+          addToFavouritesButton.classList.add('add-to-favourites-button'); // Add a class for styling
+          addToFavouritesButton.addEventListener('click', () => addToFavourites(exercise._id, token));
 
+          exerciseCard.appendChild(addToFavouritesButton);
           exercisesContainer.appendChild(exerciseCard);
       });
-      
       return exercises; // Return the fetched exercises data
   } catch (error) {
       console.error('Error fetching exercises:', error);
