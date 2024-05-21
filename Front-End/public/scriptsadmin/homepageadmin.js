@@ -25,7 +25,7 @@ const getUsernameFromToken = async (token) => {
             }
         });
 
-        return response.data.username;
+        return response.data.name;
     } catch (error) {
         console.error('Error getting username from token:', error);
         return null;
@@ -43,7 +43,7 @@ const refreshToken = async (oldToken) => {
 };
 
 const updateGreeting = async () => {
-    const usernameElement = document.getElementById('username');
+    const usernameElement = document.getElementById('name');
 
     // Retrieve token from local storage
     const token = localStorage.getItem('token');
@@ -57,11 +57,11 @@ const updateGreeting = async () => {
             console.log('Token validity:', isValid);
 
             if (isValid) {
-                console.log('Token is valid. Getting username...');
-                // If token is valid, get username from token
-                const username = await getUsernameFromToken(token);
-                console.log('Username:', username);
-                usernameElement.textContent = `Pozdravljeni, ${username}`;
+                console.log('Token is valid. Getting name...');
+                // If token is valid, get name from token
+                const name = await getUsernameFromToken(token);
+                console.log('Name:', name);
+                usernameElement.textContent = `Pozdravljeni, ${name}`;
             } else {
                 // If token is not valid, refresh token
                 console.log('Token is not valid. Refreshing token...');
@@ -69,8 +69,8 @@ const updateGreeting = async () => {
                 if (newToken) {
                     console.log('New token:', newToken);
                     localStorage.setItem('token', newToken); // Update token in local storage
-                    const username = await getUsernameFromToken(newToken);
-                    usernameElement.textContent = `Pozdravljeni, ${username}`;
+                    const name = await getUsernameFromToken(newToken);
+                    usernameElement.textContent = `Pozdravljeni, ${name}`;
                 } else {
                     console.error('Failed to refresh token');
                     usernameElement.textContent = 'Pozdravljeni, Guest';

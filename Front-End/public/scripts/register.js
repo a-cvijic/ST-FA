@@ -1,8 +1,10 @@
 const authURL = 'http://localhost:3010/auth';
 
-const register = async (username, email, password) => {
+
+  
+  const register = async (userDetails) => {
     try {
-        const response = await axios.post(`${authURL}/register`, { username, email, password });
+        const response = await axios.post(`${authURL}/register`, userDetails);
         return response.data;
     } catch (error) {
         alert('Username ali Email že obstajata');
@@ -15,38 +17,30 @@ const sanitizeInput = (input) => {
 };
 
 const validateUsername = (username) => {
-    // Perform validation checks for username
-    // Example: Ensure username contains only alphanumeric characters
     const alphanumericRegex = /^[a-zA-Z0-9]+$/;
     return alphanumericRegex.test(username);
 };
 
 const validateEmail = (email) => {
-    // Regular expression pattern for validating email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // Test the email against the regex pattern
     return emailRegex.test(email);
 };
 
-
 const validatePassword = (password) => {
-    // Perform validation checks for password
-    // Example: Ensure password meets minimum length requirements
     return password.length >= 8;
 };
 
 const handleFormSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission
-    const username = sanitizeInput(document.getElementById('username').value);
+    event.preventDefault();
+    const name = sanitizeInput(document.getElementById('name').value);
+    const surname = sanitizeInput(document.getElementById('surname').value);
     const email = sanitizeInput(document.getElementById('email').value);
     const password = sanitizeInput(document.getElementById('password').value);
     const confirmPassword = sanitizeInput(document.getElementById('confirm-password').value);
-
-    // Validate username
-    if (!validateUsername(username)) {
-        alert("Invalid username. Please use only alphanumeric characters.");
-        return;
-    }
+    const birthdate = sanitizeInput(document.getElementById('birthdate').value);
+    const gender = sanitizeInput(document.getElementById('gender').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const weight = parseFloat(document.getElementById('weight').value);
 
     // Validate email
     if (!validateEmail(email)) {
@@ -65,9 +59,20 @@ const handleFormSubmit = async (event) => {
         return;
     }
 
-    const registrationResult = await register(username, email, password);
+    const userDetails = {
+        name,
+        surname,
+        email,
+        password,
+        birthdate,
+        gender,
+        height,
+        weight
+    };
+
+    const registrationResult = await register(userDetails);
     if (registrationResult) {
-        alert('Uspešna registriracija');
+        alert('Uspešna registracija');
         window.location.href = 'index.html'; // Redirect to login page after successful registration
     } else {
         alert('Neuspešna registracija');
