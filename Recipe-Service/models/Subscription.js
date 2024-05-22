@@ -8,6 +8,10 @@ const subscriptionSchema = new mongoose.Schema({
   },
 });
 
-const Subscription = mongoose.model("Subscription", subscriptionSchema);
+const Subscription = mongoose.model(
+  "Subscription",
+  subscriptionSchema,
+  "subscriptions"
+);
 
 module.exports = Subscription;
