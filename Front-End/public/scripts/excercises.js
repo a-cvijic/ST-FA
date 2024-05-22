@@ -112,12 +112,6 @@ const addToFavourites = async (exerciseId, token) => {
             return;
         }
 
-        // Check if the exercise already exists for the current user
-        if (userExercises[exerciseData.name] && userExercises[exerciseData.name].includes(userName)) {
-            alert('Exercise already exists in favourites for this user');
-            return;
-        }
-  
         // Add user name and exercise name to exercise data
         exerciseData.userId = userName;
   
@@ -128,16 +122,15 @@ const addToFavourites = async (exerciseId, token) => {
             }
         });
         console.log('Exercise added to favorites:', saveResponse.data);
-
-        // Update userExercises with the newly added exercise
-        if (!userExercises[exerciseData.name]) {
-            userExercises[exerciseData.name] = [];
-        }
-        userExercises[exerciseData.name].push(userName);
     } catch (error) {
-        console.error('Error adding to favorites:', error);
+        if (error.response && error.response.status === 400 && error.response.data.message === 'Vaja je že dodana med všečkane vaje') {
+            alert('Vaja je že dodana med všečkane vaje');
+        } else {
+            console.error('Error adding to favorites:', error);
+        }
     }
 };
+
 
 
 

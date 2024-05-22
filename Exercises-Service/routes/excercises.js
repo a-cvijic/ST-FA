@@ -34,13 +34,23 @@ router.post('/', authenticateToken, async (req, res) => {
 
 router.post('/excercise', authenticateToken, async (req, res) => {
   try {
-    const exercise = new ExerciseUser(req.body);
-    await exercise.save();
-    res.send(exercise);
+      const { name, userId } = req.body;
+      
+      // Check if the exercise already exists for this user
+      const existingExercise = await ExerciseUser.findOne({ name, userId });
+      
+      if (existingExercise) {
+          return res.status(400).send({ message: 'Vaja je že dodana med všečkane vaje' });
+      }
+      
+      const exercise = new ExerciseUser(req.body);
+      await exercise.save();
+      res.send(exercise);
   } catch (error) {
-    res.send(error);
+      res.status(500).send(error);
   }
 });
+
 
 
 router.get('/exercise/:name', authenticateToken, async (req, res) => {
