@@ -1,0 +1,113 @@
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px; /* Full viewport height to center vertically */
+}
+
+.buttonAll {
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    background-color: #007BFF; /* Blue color */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    border: none; /* Optional: remove default border */
+    cursor: pointer; /* Add pointer cursor on hover */
+}
+
+.buttonAll:hover {
+    background-color: #0056b3; /* Darker blue color on hover */
+}
+
+
+
+a {
+    color: black; /* Change the text color to black */
+    text-decoration: none; /* Remove default underline */
+    font-size: 18px; /* Increase font size */
+    transition: color 0.3s; /* Smooth transition for color change */
+}
+
+a:hover {
+    color: gray; /* Change text color to gray on hover */
+}
+
+
+
+header {
+    background-color: #FED467;
+    color: black;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between; /* Align items horizontally */
+    align-items: center; /* Align items vertically */
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+/* Exercise container styles */
+.trainings-container {
+    max-width: 800px; /* Adjust the max-width as needed */
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 20px; /* Add some padding around the container */
+}
+
+/* Exercise card styles */
+/* Exercise card styles */
+.training-card {
+    width: 85%; /* Adjust to take 85% of the width */
+    max-width: 500px; /* Set a maximum width */
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 20px auto; /* Center horizontally */
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100%;
+}
+
+.training-header {
+    margin-bottom: 10px;
+}
+
+.training-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.training-body p {
+    margin: 5px 0;
+    color: #666;
+}
+
+/* Media query for responsiveness */
+@media screen and (max-width: 600px) {
+    .trainings-container {
+        padding: 10px;
+    }
+}
