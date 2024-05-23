@@ -6,6 +6,10 @@ const chatMessageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const ChatMessage = mongoose.model("ChatMessage", chatMessageSchema);
+const ChatMessage = mongoose.model(
+  "ChatMessage",
+  chatMessageSchema,
+  "chatMessages"
+);
 
 module.exports = ChatMessage;
