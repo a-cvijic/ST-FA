@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podrobnosti vadbe</title>
+    <link rel="stylesheet" href="../css/excercise_details.css">
+</head>
+<body>
+    <header>
+        <h1>Opis vaje</h1>
+    <nav>
+        <ul>
+            <li><a href="../homepage.html">Domov</a></li>
+            <li><a href="../trainings.html">Treningi</a></li>
+            <li><a href="../excercises.html">Vaje</a></li>
+            <li><a href="../recipes.html">Recepti</a></li>
+            <li><button id="logout-button">Logout</button></li>
+        </ul>
+    </nav>
+</header>
+    <div id="exercise-detail">
+        <h1 id="exercise-name">Dips</h1>
+        <div id="exercise-description">
+            <h2>Opis</h2>
+            <p id="exercise-description">Vaja Dips je odlična vaja za krepitev prsnih mišic, sprednjih deltoidov in tricepsa.</p>
+        </div>
+        <div id="exercise-movement">
+            <h2>Gibanje</h2>
+            <p id="exercise-movement">Pri izvajanju te vaje se uporabnik obesi na dva vzporedna drogova in se spusti navzdol. Dovolite, da vaša telesna teža visi, tako da jo podpirajo vaše roke in ramena. Ohranite raven bok. 
+                Spustite telo, tako da počasi upogibate komolce in se rahlo nagnete naprej ter nadaljujte navzdol, dokler ne začutite raztezanja v prsih, ramenih in tricepsih. 
+                Vaš komolčni sklep naj bo približno pod kotom 90 stopinj na dnu gibanja.</p>
+                <img src="../img/dips.gif" class="centered" alt="vaja dips">
+        </div>
+        <div id="exercise-details">
+            <h2>Podrobnosti</h2>
+            <p>Trajanje: <span id="exercise-duration"></span> minut</p>
+            <p>Kalorije: <span id="exercise-calories"></span> kcal</p>
+            <p>Vrsta: <span id="exercise-type"></span></p>
+            <p>Težavnost: <span id="exercise-difficulty"></span></p>
+            <p>Kratek opis: <span id="exercise-description-content"></span></p>
+        </div>
+        <div id="exercise-benefits">
+            <h2>Koristi</h2>
+            <ul id="exercise-benefits-list">
+                <li>Pospešuje zdravje srca in ožilja</li>
+                <li>Dobra vaja za gradnjo prsnega koša in tricepsov</li>
+                <li>Pomaga pri obvladovanju telesne teže</li>
+                <li>Zmanjšuje stres in tesnobo</li>
+            </ul>
+        </div>
+        <div id="exercise-tips">
+            <h2>Nasveti</h2>
+            <ul id="exercise-tips-list">
+                <li>Ponavadi se izvedejo 3 serije po 10-12 ponovitev</li>
+                <li>Za večji učinek si lahko okoli pasu obesite dodatne uteži</li>
+            </ul>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../scripts/exercise_detail.js"></script>
+    <script src="../scripts/logoutexcercise.js"></script>
+</body>
+</html>
