@@ -229,6 +229,33 @@ const deleteUser = async (userId, token) => {
 
 document.getElementById('dodaj-uporabnika').addEventListener('click', showPostForm);
 
+const verifyTokenAndDeleteUsers = async (userId) => {
+  const token = localStorage.getItem('token'); // Get token from local storage
+  if (token) {
+      try {
+          const isValid = await checkTokenValidity(token); // Check if token is valid
+          if (!isValid) {
+              const newToken = await refreshToken(token); // Refresh token
+              if (newToken) {
+                  localStorage.setItem('token', newToken); // Update token in local storage
+                  console.log('Nov token:', newToken);
+                  await deleteUser(userId, newToken); // Delete exercise with refreshed token
+              } else {
+                  console.error('Neuspešno posodabljanje tokena');
+              }
+          } else {
+              console.log('Token je veljaven');
+              await deleteUser(userId, token); // Delete exercise with existing token
+          }
+      } catch (error) {
+          console.error('Napaka:', error);
+      }
+  } else {
+      console.error('V lokalni shrambi ni tokena');
+  }
+};
+
+
     function saveUsersToLocal(users) {
         try {
           // Convert users to JSON and store in local storage
