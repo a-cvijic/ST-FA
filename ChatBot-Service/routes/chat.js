@@ -1,5 +1,6 @@
 const express = require("express");
 const { Configuration, OpenAIApi } = require("openai");
+const ChatMessage = require("../models/ChatMessage");
 require("dotenv").config();
 
 const router = express.Router();
@@ -23,6 +24,14 @@ router.post("/", async (req, res) => {
     });
 
     const chatbotMessage = response.data.choices[0].message.content;
+
+    // Save to database
+    const chatMessage = new ChatMessage({
+      message: message,
+      response: chatbotMessage,
+    });
+
+    await chatMessage.save();
 
     res.json({ response: chatbotMessage });
   } catch (error) {
