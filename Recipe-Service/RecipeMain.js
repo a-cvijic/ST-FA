@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB initialization
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(process.env.MONGO_URI_RECIPE, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
