@@ -313,13 +313,11 @@ const showEditForm = async (exerciseId) => {
                         };
                         await updateExercise(exerciseId, updatedExerciseData, token);
                         await verifyTokenAndFetchExercises();
-                        location.reload();
                     }
                 });
             } else {
                 console.error('Vaja ni bila najdena');
             }
-            location.reload();
         } catch (error) {
             console.error('Napaka:', error);
         }
