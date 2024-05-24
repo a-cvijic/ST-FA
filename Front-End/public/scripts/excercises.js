@@ -172,8 +172,11 @@ const addToFavourites = async (exerciseId, token) => {
                 <p>Calories: ${exercise.calories}</p>
                 <p>Type: ${exercise.type}</p>
                 <p>Difficulty: ${exercise.difficulty}</p>
+                <p>Series: ${exercise.series}</p>
+                <p>Repetitions: ${exercise.repetitions}</p>
             `;
             exerciseCard.appendChild(exerciseBody);
+            
             // Create "Add to Favourites" button
             const addToFavouritesButton = document.createElement('button');
             addToFavouritesButton.textContent = 'Add to Favourites';
@@ -188,7 +191,8 @@ const addToFavourites = async (exerciseId, token) => {
         console.error('Error fetching exercises:', error);
         return null; // Return null if there's an error
     }
-  };
+};
+
   
   const verifyTokenAndFetchExercises = async () => {
     const token = localStorage.getItem('token'); // Get token from local storage
