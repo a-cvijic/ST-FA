@@ -82,11 +82,11 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
-  const Training = await Training.findById(req.params.id);
-  if (!Training) {
+  const training = await Training.findById(req.params.id);
+  if (!training) {
     return res.send({ message: 'Trening ni bil najden' });
   }
-  res.send(Training);
+  res.send(training);
   } catch (error) {
   res.send(error);
   }
@@ -94,11 +94,11 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
 router.put('/:id', authenticateToken, async (req, res) => {
   try {
-  const Training = await Training.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  if (!Training) {
+  const training = await Training.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  if (!training) {
     return res.send({ message: 'Trening ni bil najden' });
   }
-  res.send(Training);
+  res.send(training);
   } catch (error) {
   res.send(error);
   }
@@ -106,11 +106,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
-  const Training = await Training.findByIdAndDelete(req.params.id);
-  if (!Training) {
+  const training = await Training.findByIdAndDelete(req.params.id);
+  if (!training) {
     return res.send({ message: 'Trening ni bil najden' });
   }
-  res.send(Training);
+  res.send(training);
   } catch (error) {
   res.send(error);
   }
@@ -118,11 +118,11 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 
 router.delete('/training/:id', authenticateToken, async (req, res) => {
   try {
-  const Training = await TrainingUser.findByIdAndDelete(req.params.id);
-  if (!Training) {
+  const training = await TrainingUser.findByIdAndDelete(req.params.id);
+  if (!training) {
     return res.send({ message: 'Trening ni bil najden' });
   }
-  res.send(Training);
+  res.send(training);
   } catch (error) {
   res.send(error);
   }
