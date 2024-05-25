@@ -116,6 +116,7 @@ const addToFavourites = async (exerciseId, token) => {
         exerciseData.userId = userName;
   
         // Save new document to ExerciseUser database
+        delete exerciseData._id;
         const saveResponse = await axios.post(`${baseURL}excercise`, exerciseData, {
             headers: {
                 Authorization: `Bearer ${token}`
