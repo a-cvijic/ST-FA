@@ -73,4 +73,4 @@ const deleteUserById = async (userId, token) => {
 };
 
 
-document.getElementById('izbriši-profil').addEventListener('click', confirmDeleteProfile);
+document.getElementById('izbrisi-profil').addEventListener('click', confirmDeleteProfile);

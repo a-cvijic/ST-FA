@@ -24,8 +24,8 @@
     </header>
     <main id="profile-main">
         <section id="user-section">
-            <div id="avatar"><img src="./img/avatar.png" alt="" id="avatar-icon"></div>
-            <p><strong></strong> <span id="name"></span></p>
+            <div id="avatar"><img src="./img/avatar.png" alt="user-avatar" id="avatar-icon"></div>
+            <p><img src="./img/edit.png" alt="edit-icon" id="edit-icon"><strong></strong> <span id="name"></span></p>
             <div id="user-details">
                 <div class="user-field">
                     <label for="email">Email:</label>
@@ -52,10 +52,28 @@
                 </div>
             </div>
         </section>
-        <button id="izbriši-profil">Izbriši profil</button>
-    </main>    
+        <button id="izbrisi-profil">Izbriši profil</button>
+    </main> 
+<!-- Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <!-- Add your form fields here for editing user details -->
+        <div class="user-field">
+            <label for="height-input">Height (cm):</label>
+            <input type="number" id="height-input">
+        </div>
+        <div class="user-field">
+            <label for="weight-input">Weight (kg):</label>
+            <input type="number" id="weight-input">
+        </div>
+        <button id="save-changes">Save Changes</button>
+    </div>
+</div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./scripts/user_details.js"></script>
+    <script src="./scripts/update_profile.js"></script>
     <script src="./scripts/delete_profile.js"></script>
     <script src="./scripts/logout.js"></script>
 </body>

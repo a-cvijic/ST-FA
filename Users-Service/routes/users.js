@@ -174,16 +174,23 @@ router.get('/', async (req, res) => {
   });
   
   router.put('/:id', getUser, async (req, res) => {
-  if (req.body.name != null) {
-     res.user.name = req.body.name;
-     }
-  try {
-  const updatedUser = await res.user.save();
-  res.json(updatedUser);
-  } catch (err) {
-  res.status(400).json({ message: err.message });
-  }
-  });
+    if (req.body.name != null) {
+        res.user.name = req.body.name;
+    }
+    if (req.body.height != null) {
+        res.user.height = req.body.height;
+    }
+    if (req.body.weight != null) {
+        res.user.weight = req.body.weight;
+    }
+
+    try {
+        const updatedUser = await res.user.save();
+        res.json(updatedUser);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
   
   router.delete('/:id', async (req, res) => {
     try {
