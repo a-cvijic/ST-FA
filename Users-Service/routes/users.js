@@ -139,7 +139,7 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-// Update user profile
+
 router.put('/profile', async (req, res) => {
   const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
   if (!token) {
@@ -222,17 +222,6 @@ router.get('/:id', getUser, (req, res) => {
     res.json(res.user);
   });
   
-router.put('/:id', getUser, async (req, res) => {
-  if (req.body.name != null) {
-     res.user.name = req.body.name;
-     }
-  try {
-  const updatedUser = await res.user.save();
-  res.json(updatedUser);
-  } catch (err) {
-  res.status(400).json({ message: err.message });
-  }
-  });
   
 router.delete('/:id', async (req, res) => {
     try {
