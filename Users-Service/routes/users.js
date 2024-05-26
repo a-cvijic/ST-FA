@@ -1,92 +1,73 @@
-// routes/authRoutes.js
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../../Users-Service/Model/User');
+const User = require('../Model/User');
 const router = express.Router();
 require('dotenv').config();
 
 const secretKey = process.env.SECRET_KEY;
 
-// Function to generate token
 function generateToken(user) {
-    return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '15s' });
+  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '1h' });
 }
 
 router.get('/getUsername', (req, res) => {
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; // Extract token from headers
-    if (!token) {
-        return res.status(401).json({ message: 'Token not provided' });
-    }
-
-    try {
-        const decodedToken = jwt.decode(token);
-        const name = decodedToken.name;
-        res.json({ name });
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-router.get('/getId', (req, res) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; // Extract token from headers
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
   if (!token) {
       return res.status(401).json({ message: 'Token not provided' });
   }
 
   try {
       const decodedToken = jwt.decode(token);
-      const userId = decodedToken.userId;
-      res.json({ userId });
+      const name = decodedToken.name;
+      res.json({ name });
   } catch (error) {
       console.error('Error decoding token:', error);
       res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Registration route
 router.post('/register', async (req, res) => {
-    try {
-        const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
-        const existingEmail = await User.findOne({ email });
-        if (existingEmail) {
-            return res.status(400).json({ message: 'Email is already registered' });
-        }
-        if (!password || password.length < 8) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({
-            name,
-            surname,
-            email,
-            password: hashedPassword,
-            birthdate,
-            gender,
-            height,
-            weight
-        });
-        await user.save();
-        res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
+  try {
+      const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+          return res.status(400).json({ message: 'Email is already registered' });
+      }
+      if (!password || password.length < 8) {
+          return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+      }
+      const _id = Math.floor(10000 + Math.random() * 90000);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = new User({
+          _id,
+          name,
+          surname,
+          email,
+          password: hashedPassword,
+          birthdate,
+          gender,
+          height,
+          weight
+      });
+      await user.save();
+      res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+      console.error('Error registering user:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
-
-// Login route
 router.post('/login', async (req, res) => {
     try {
-        const { name, password } = req.body;
-        const user = await User.findOne({ name });
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).send({ message: 'Invalid username/password' });
+            return res.status(401).send({ message: 'Invalid email' });
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).send({ message: 'Invalid username/password' });
+            return res.status(401).send({ message: 'Invalid password' });
         }
         const token = generateToken(user);
         res.send({ token });
@@ -96,7 +77,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Token verification route
 router.get('/verify-token', (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     if (!token) {
@@ -111,16 +91,85 @@ router.get('/verify-token', (req, res) => {
     }
 });
 
-// Token refresh route
 router.post('/refresh-token', async (req, res) => {
     const refreshToken = req.body.token;
     if (!refreshToken) {
         return res.status(401).json({ error: 'No refresh token provided' });
     }
     const decoded = jwt.decode(refreshToken);
-    const { userId, name } = decoded;
-    const newToken = jwt.sign({ userId, name }, secretKey, { expiresIn: '1h' });
+    const { userId, email } = decoded;
+    const newToken = jwt.sign({ userId, email }, secretKey, { expiresIn: '1h' });
     res.json({ newToken });
+});
+
+router.get('/profile', async (req, res) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  if (!token) {
+      console.error('Token not provided');
+      return res.status(401).json({ message: 'Token not provided' });
+  }
+
+  try {
+      const decodedToken = jwt.verify(token, secretKey);
+      console.log('Decoded token:', decodedToken);
+
+      if (!decodedToken.userId) {
+          console.error('Invalid token, userId missing');
+          return res.status(400).json({ message: 'Invalid token' });
+      }
+
+      const user = await User.findById(decodedToken.userId);
+      if (!user) {
+          console.error('User not found with ID:', decodedToken.userId);
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json({
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          birthdate: user.birthdate,
+          gender: user.gender,
+          height: user.height,
+          weight: user.weight
+      });
+  } catch (error) {
+      console.error('Error fetching user profile:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+router.put('/profile', async (req, res) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  if (!token) {
+      return res.status(401).json({ message: 'Token not provided' });
+  }
+
+  try {
+      const decodedToken = jwt.verify(token, secretKey);
+      const user = await User.findById(decodedToken.userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
+
+      if (name) user.name = name;
+      if (surname) user.surname = surname;
+      if (email) user.email = email;
+      if (password) user.password = await bcrypt.hash(password, 10);
+      if (birthdate) user.birthdate = birthdate;
+      if (gender) user.gender = gender;
+      if (height) user.height = height;
+      if (weight) user.weight = weight;
+
+      await user.save();
+      res.json({ message: 'User profile updated successfully' });
+  } catch (error) {
+      console.error('Error updating user profile:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 router.get('/', async (req, res) => {
@@ -147,7 +196,7 @@ router.get('/', async (req, res) => {
     next();
   };
 
-  router.post('/', async (req, res) => {
+router.post('/', async (req, res) => {
     const user = new User({
       _id: req.body._id,
       name: req.body.name,
@@ -169,30 +218,12 @@ router.get('/', async (req, res) => {
   });
   
   
-  router.get('/:id', getUser, (req, res) => {
+router.get('/:id', getUser, (req, res) => {
     res.json(res.user);
   });
   
-  router.put('/:id', getUser, async (req, res) => {
-    if (req.body.name != null) {
-        res.user.name = req.body.name;
-    }
-    if (req.body.height != null) {
-        res.user.height = req.body.height;
-    }
-    if (req.body.weight != null) {
-        res.user.weight = req.body.weight;
-    }
-
-    try {
-        const updatedUser = await res.user.save();
-        res.json(updatedUser);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
   
-  router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
       const result = await User.findByIdAndDelete(req.params.id);
       if (!result) {
