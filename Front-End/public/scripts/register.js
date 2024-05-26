@@ -7,7 +7,7 @@ const authURL = 'http://localhost:3010/auth';
         const response = await axios.post(`${authURL}/register`, userDetails);
         return response.data;
     } catch (error) {
-        alert('Username ali Email že obstajata');
+        alert('E-naslov že obstaja!');
         return null;
     }
 };
@@ -42,20 +42,18 @@ const handleFormSubmit = async (event) => {
     const height = parseFloat(document.getElementById('height').value);
     const weight = parseFloat(document.getElementById('weight').value);
 
-    // Validate email
     if (!validateEmail(email)) {
-        alert("Invalid email address.");
+        alert("Nepravilen e-naslov!");
         return;
     }
 
-    // Validate password
     if (!validatePassword(password)) {
-        alert("Password must be at least 8 characters long.");
+        alert("Gešlo mora biti dolgo vsaj 8 znakov!");
         return;
     }
 
     if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+        alert("Gesla se ne ujemata!");
         return;
     }
 
@@ -72,13 +70,13 @@ const handleFormSubmit = async (event) => {
 
     const registrationResult = await register(userDetails);
     if (registrationResult) {
-        alert('Uspešna registracija');
-        window.location.href = 'index.html'; // Redirect to login page after successful registration
+        alert('Uspešna registracija!');
+        window.location.href = 'index.html';
     } else {
-        alert('Neuspešna registracija');
+        alert('Neuspešna registracija!');
     }
 };
 
-// Add event listener to form submission
+
 document.getElementById('registration-form').addEventListener('submit', handleFormSubmit);
 
