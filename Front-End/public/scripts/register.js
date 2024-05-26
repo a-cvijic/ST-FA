@@ -48,7 +48,7 @@ const handleFormSubmit = async (event) => {
     }
 
     if (!validatePassword(password)) {
-        alert("Gešlo mora biti dolgo vsaj 8 znakov!");
+        alert("Geslo mora biti dolgo vsaj 8 znakov!");
         return;
     }
 

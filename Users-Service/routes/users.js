@@ -8,7 +8,7 @@ require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 
 function generateToken(user) {
-  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '15s' });
+  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '1h' });
 }
 
 router.get('/getUsername', (req, res) => {
