@@ -141,6 +141,10 @@ const Exercises = () => {
 
   return (
     <div id="exercises-container">
+      <div className="buttons-container">
+        <Link to="/exercises" className="buttonAll">Vse vaje</Link>
+        <Link to="/exercisesuser" className="buttonAll">Všečkane vaje</Link>
+      </div>
       {exercises.map((exercise) => (
         <div key={exercise._id} className="exercise-card">
           <div className="exercise-header">
