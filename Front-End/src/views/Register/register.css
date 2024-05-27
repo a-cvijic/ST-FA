@@ -1,0 +1,144 @@
+body.register-page {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    background-image: url('https://i.imgur.com/6iRiS8I.jpeg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+}
+
+.register-container {
+    width: 30%;
+    max-width: 100%;
+    margin: 2% auto;
+    padding: 1%;
+    background-color: #FED467;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #b1b1b1;
+    text-align: center;
+}
+
+.register-container h2 {
+    font-size: 150%;
+    margin-bottom: 20px;
+}
+
+.register-container h2:after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 2px;
+    background-color: black;
+    margin: 10px auto 20px;
+}
+
+.register-container .form-group {
+    margin: 0 5% 3%;
+    width: 90%;
+}
+
+.register-container label {
+    font-size: 16px;
+    color: #333;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"],
+.register-container input[type="number"],
+.register-container input[type="date"],
+.register-container input[type="gender"],
+.register-container select {
+    width: 100%;
+    padding: 10px 1px;
+    border: 1px #a7a7a7;
+    border-radius: 4px;
+    background: #fff;
+    color: #000000;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 100%;
+}
+
+.register-container button[type="submit"] {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background-color: #fcfcfc;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 100%;
+}
+
+.register-container button[type="submit"]:hover {
+    background-color: #ff9900;
+    font-weight: bold;
+    border: 1px solid #000000;
+    transition: background-color 0.3s;
+}
+
+.register-container p {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+.register-container a {
+    color: #000000;
+    text-decoration: underline;
+    transition: background-color 0.3s;
+}
+
+.register-container a:hover {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.register-container .form-group span {
+    font-size: 16px;
+    color: #333;
+    padding-left: 5px;
+}
+
+.register-container .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    width: 48%;
+}
+
+.register-container .input-wrapper:last-child {
+    margin-left: 4%;
+}
+
+.register-container .input-wrapper input {
+    width: 79%;
+    padding-right: 1px;
+}
+
+.register-container .input-wrapper span {
+    position: absolute;
+    right: 85px;
+    top: 36px;
+}
+
+.register-container .dual-input {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-start
+}
+
+.register-container .attention {
+    color: #000000;
+    font-size: 90%;
+    margin-top: 5%;
+}
