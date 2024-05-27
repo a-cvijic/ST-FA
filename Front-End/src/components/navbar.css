@@ -1,0 +1,25 @@
+nav {
+    background-color: #FED467;
+    padding: 10px;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  nav ul li a {
+    color: #000000;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 130%;
+  }
+  
+nav ul li a:hover {
+    color: #000000;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    transition: color 0.5s;
+}
+  
