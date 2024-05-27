@@ -64,7 +64,7 @@ router.post("/recipes", authenticateToken, async (req, res) => {
   try {
     const recipe = new Recipe(req.body);
     await recipe.save();
-    res.status(201).json({ message: "Recipe created successfully" });
+    res.status(201).json({ message: "Recipe created successfully", recipe });
     sendPushNotification(); // Send push notification after recipe is created
   } catch (err) {
     res.status(500).json({ error: "Failed to create recipe" });
@@ -103,7 +103,7 @@ router.put("/recipes/:id", authenticateToken, async (req, res) => {
     if (!recipe) {
       return res.status(404).json({ error: "Recipe not found" });
     }
-    res.json({ message: "Recipe updated successfully" });
+    res.json({ message: "Recipe updated successfully", recipe });
   } catch (err) {
     res.status(500).json({ error: "Failed to update recipe" });
   }
