@@ -119,13 +119,16 @@ const ExercisesUser = () => {
   }, [token]);
 
   return (
-    <div id="exercises-container">
-      <div className="buttons-container">
-        <Link to="/exercises" className="buttonAll">Vse vaje</Link>
-        <Link to="/exercisesuser" className="buttonAll">Všečkane vaje</Link>
-      </div>
+    <div className="buttons-container">
+    <Link to="/exercises" className="buttonAll">Vse vaje</Link>
+    <Link to="/exercisesuser" className="buttonAll">Všečkane vaje</Link>
+    <div id="exercises-container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
       {exercises.map((exercise) => (
-        <div key={exercise._id} className="exercise-card">
+        <div key={exercise._id} className="exercise-card" style={{
+          flex: '1 1 calc(25% - 16px)', // 25% width minus margin for spacing
+          margin: '8px',
+          boxSizing: 'border-box'
+        }}>
           <div className="exercise-header">
             <Link to={`/exercise/${exercise._id}`} className="exercise-name-link">
               {exercise.name}
@@ -146,6 +149,7 @@ const ExercisesUser = () => {
           </button>
         </div>
       ))}
+    </div>
     </div>
   );
 };
