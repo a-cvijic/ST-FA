@@ -81,7 +81,7 @@ const AuthenticatedRoutes = ({ isAdmin }) => (
         <Route path="/training/:trainingId" component={TrainingDetails} />
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/exercises" element={<Exercises />} />
-        <Route path="/exercise/:exerciseId" component={ExercisesDetails} />
+        <Route path="/exercise/:exerciseId" element={<ExercisesDetails />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
       </>
