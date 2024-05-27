@@ -8,7 +8,7 @@ require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 
 function generateToken(user) {
-  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '1h' });
+  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '15s' });
 }
 
 router.get('/getUsername', (req, res) => {
@@ -97,8 +97,8 @@ router.post('/refresh-token', async (req, res) => {
         return res.status(401).json({ error: 'No refresh token provided' });
     }
     const decoded = jwt.decode(refreshToken);
-    const { userId, email } = decoded;
-    const newToken = jwt.sign({ userId, email }, secretKey, { expiresIn: '1h' });
+    const { userId, name } = decoded;
+    const newToken = jwt.sign({ userId, name }, secretKey, { expiresIn: '1h' });
     res.json({ newToken });
 });
 
