@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './excercise_details.css';
-import BenchPressGif from '../../gifs/bench_press.gif';
+import gifs from './loadGifs.js';// potem kličem to komponento tukaj
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
@@ -80,6 +80,8 @@ const ExercisesDetails = () => {
     }
   };
 
+  const gifUrl = exercise ? gifs[exercise.name.replace(/\s+/g, '_').toLowerCase()] : '';// in jo uporabim tukaj
+
   return (
     <div id="exercise-detail">
       {loading ? (
@@ -87,7 +89,7 @@ const ExercisesDetails = () => {
       ) : exercise ? (
         <div>
           <div className="exercise-detail-section">
-          <div><strong>Opis vaje:</strong></div>
+            <div><strong>Opis vaje:</strong></div>
             <div><strong>Ime:</strong> {exercise.name}</div>
             <div><strong>Trajanje:</strong> {exercise.duration} minutes</div>
             <div><strong>Kalorije:</strong> {exercise.calories}</div>
@@ -97,6 +99,9 @@ const ExercisesDetails = () => {
           <div className="exercise-detail-section">
             <div><strong>Opis:</strong></div>
             <div>{exercise.description}</div>
+          </div>
+          <div className="exercise-detail-section centered-content">
+            {gifUrl ? <img src={gifUrl} alt="Exercise GIF" /> : <p>GIF not available</p>}
           </div>
           <div className="exercise-detail-section">
             <div><strong>Gibanje:</strong></div>
@@ -124,10 +129,6 @@ const ExercisesDetails = () => {
           <div className="exercise-detail-section">
             <div><strong>Ponovitve na serijo:</strong> {exercise.repetitions}</div>
           </div>
-          <div className="exercise-detail-section">
-            <div><strong>GIF:</strong></div>
-            <img src={BenchPressGif} alt="Bench press GIF" />
-          </div>
         </div>
       ) : (
         <p>Nismo našli podatkov o vaji</p>
@@ -135,6 +136,5 @@ const ExercisesDetails = () => {
     </div>
   );
 };
-
 
 export default ExercisesDetails;

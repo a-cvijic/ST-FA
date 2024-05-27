@@ -2,4 +2,18 @@
     margin-bottom: 20px; 
     margin-top: 20px;
   }
+#exercise-detail {
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 1800px; 
+    box-sizing: border-box;
+  }
+  
+  .centered-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 200px; 
+  }
   
