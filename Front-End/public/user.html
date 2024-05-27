@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil</title>
+    <!-- Add your CSS stylesheets here -->
+    <link rel="stylesheet" href="./css/user_details.css">
+    <link rel="stylesheet" href="./css/homepage.css">
+</head>
+<body>
+    <header>
+        <div><b><h2>Profil</h1></b></div>
+        <nav>
+            <ul>
+                <li><a href="homepage.html">Domov</a></li>
+                <li><a href="trainings.html">Treningi</a></li>
+                <li><a href="excercises.html">Vaje</a></li>
+                <li><a href="recipes.html">Recepti</a></li>
+                <li><a href="user.html">Profil</a></li>
+                <li><button id="logout-button">Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="profile-main">
+        <section id="user-section">
+            <div id="avatar"><img src="./img/avatar.png" alt="user-avatar" id="avatar-icon"></div>
+            <p><img src="./img/edit.png" alt="edit-icon" id="edit-icon"><strong></strong> <span id="name"></span></p>
+            <div id="user-details">
+                <div class="user-field">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" readonly>
+                </div>
+                <div class="user-field">
+                    <label for="birthdate">Birthdate:</label>
+                    <input type="date" id="birthdate" readonly>
+                </div>
+                <div class="user-field">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" disabled>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="user-field">
+                    <label for="height">Height (cm):</label>
+                    <input type="number" id="height" readonly>
+                </div>
+                <div class="user-field">
+                    <label for="weight">Weight (kg):</label>
+                    <input type="number" id="weight" readonly>
+                </div>
+            </div>
+        </section>
+        <button id="izbrisi-profil">Izbriši profil</button>
+    </main> 
+<!-- Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <!-- Add your form fields here for editing user details -->
+        <div class="user-field">
+            <label for="height-input">Height (cm):</label>
+            <input type="number" id="height-input">
+        </div>
+        <div class="user-field">
+            <label for="weight-input">Weight (kg):</label>
+            <input type="number" id="weight-input">
+        </div>
+        <button id="save-changes">Save Changes</button>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./scripts/user_details.js"></script>
+    <script src="./scripts/update_profile.js"></script>
+    <script src="./scripts/delete_profile.js"></script>
+    <script src="./scripts/logout.js"></script>
+</body>
+</html>
