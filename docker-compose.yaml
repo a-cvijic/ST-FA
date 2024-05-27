@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  recipe:
+    build:
+      context: ./Recipe-Service
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+
+  chatbot:
+    build:
+      context: ./ChatBot-Service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
