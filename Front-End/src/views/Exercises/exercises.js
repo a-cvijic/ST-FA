@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './exercises.css'; // Import the CSS file
+import './exercises.css';
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
@@ -140,12 +141,16 @@ const Exercises = () => {
 
   return (
     <div id="exercises-container">
+      <div className="buttons-container">
+        <Link to="/exercises" className="buttonAll">Vse vaje</Link>
+        <Link to="/exercisesuser" className="buttonAll">Všečkane vaje</Link>
+      </div>
       {exercises.map((exercise) => (
         <div key={exercise._id} className="exercise-card">
           <div className="exercise-header">
-            <a href={`/exercise/${exercise.name.replace(/\s/g, '_').toLowerCase()}?exerciseId=${exercise._id}`} className="exercise-name-link">
-              {exercise.name}
-            </a>
+          <Link to={`/exercise/${exercise._id}`} className="exercise-name-link">
+          {exercise.name}
+          </Link>
           </div>
           <div className="exercise-body">
             <p>ID: {exercise._id}</p>

@@ -1,36 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import './excercise_details.css';
+import gifs from './loadGifs.js';// potem kličem to komponento tukaj
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
 
 const ExercisesDetails = () => {
   const { exerciseId } = useParams();
+  const navigate = useNavigate();
   const [exercise, setExercise] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
   useEffect(() => {
     const fetchData = async () => {
-      const isValid = await checkTokenValidity(token);
-      if (!isValid) {
-        const newToken = await refreshToken(token);
-        if (newToken) {
-          localStorage.setItem('token', newToken);
-          setToken(newToken);
-          const refreshedExercise = await getExerciseById(exerciseId, newToken);
-          setExercise(refreshedExercise);
+      try {
+        setLoading(true);
+        const isValid = await checkTokenValidity(token);
+        if (!isValid) {
+          const newToken = await refreshToken(token);
+          if (newToken) {
+            localStorage.setItem('token', newToken);
+            setToken(newToken);
+            const refreshedExercise = await getExerciseById(exerciseId, newToken);
+            setExercise(refreshedExercise);
+          } else {
+            navigate('/login');
+            return;
+          }
         } else {
-          console.error('Failed to refresh token');
+          const exerciseData = await getExerciseById(exerciseId, token);
+          setExercise(exerciseData);
         }
-      } else {
-        const exerciseData = await getExerciseById(exerciseId, token);
-        setExercise(exerciseData);
+        setLoading(false);
+      } catch (error) {
+        navigate('/login');
       }
     };
-
     fetchData();
-  }, [exerciseId, token]);
+  }, [exerciseId, token, navigate]);
 
   const checkTokenValidity = async (token) => {
     try {
@@ -70,32 +80,58 @@ const ExercisesDetails = () => {
     }
   };
 
+  const gifUrl = exercise ? gifs[exercise.name.replace(/\s+/g, '_').toLowerCase()] : '';// in jo uporabim tukaj
+
   return (
     <div id="exercise-detail">
-      {exercise ? (
+      {loading ? (
+        <p>Loading exercise details...</p>
+      ) : exercise ? (
         <div>
-          <div id="exercise-name">{exercise.name}</div>
-          <div id="exercise-duration">{exercise.duration}</div>
-          <div id="exercise-calories">{exercise.calories}</div>
-          <div id="exercise-type">{exercise.type}</div>
-          <div id="exercise-difficulty">{exercise.difficulty}</div>
-          <div id="exercise-description-content">{exercise.description}</div>
-          <div id="exercise-movement-content">{exercise.movement}</div>
-          <ul id="exercise-benefits-list">
-            {exercise.benefits.map((benefit, index) => (
-              <li key={index}>{benefit}</li>
-            ))}
-          </ul>
-          <ul id="exercise-tips-list">
-            {exercise.tips.map((tip, index) => (
-              <li key={index}>{tip}</li>
-            ))}
-          </ul>
-          <div id="exercise-series">{exercise.series}</div>
-          <div id="exercise-repetitions">{exercise.repetitions}</div>
+          <div className="exercise-detail-section">
+            <div><strong>Opis vaje:</strong></div>
+            <div><strong>Ime:</strong> {exercise.name}</div>
+            <div><strong>Trajanje:</strong> {exercise.duration} minutes</div>
+            <div><strong>Kalorije:</strong> {exercise.calories}</div>
+            <div><strong>Tip:</strong> {exercise.type}</div>
+            <div><strong>Težavnost:</strong> {exercise.difficulty}</div>
+          </div>
+          <div className="exercise-detail-section">
+            <div><strong>Opis:</strong></div>
+            <div>{exercise.description}</div>
+          </div>
+          <div className="exercise-detail-section centered-content">
+            {gifUrl ? <img src={gifUrl} alt="Exercise GIF" /> : <p>GIF not available</p>}
+          </div>
+          <div className="exercise-detail-section">
+            <div><strong>Gibanje:</strong></div>
+            <div>{exercise.movement}</div>
+          </div>
+          <div className="exercise-detail-section">
+            <div><strong>Koristi:</strong></div>
+            <ul>
+              {exercise.benefits.map((benefit, index) => (
+                <li key={index}>{benefit}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="exercise-detail-section">
+            <div><strong>Nasveti:</strong></div>
+            <ul>
+              {exercise.tips.map((tip, index) => (
+                <li key={index}>{tip}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="exercise-detail-section">
+            <div><strong>Št serij:</strong> {exercise.series}</div>
+          </div>
+          <div className="exercise-detail-section">
+            <div><strong>Ponovitve na serijo:</strong> {exercise.repetitions}</div>
+          </div>
         </div>
       ) : (
-        <p>No exercise details found.</p>
+        <p>Nismo našli podatkov o vaji</p>
       )}
     </div>
   );

@@ -9,6 +9,7 @@ import TrainingDetails from './views/Trainings/trainingsDetails';
 import Recipes from './views/Recepies/recepies';
 
 import Exercises from './views/Exercises/exercises';
+import ExercisesUser from './views/Exercises/exerciseuser';
 import ExercisesDetails from './views/Exercises/exercisesDetails';
 
 import Chat from './views/Chat/chat';
@@ -81,7 +82,8 @@ const AuthenticatedRoutes = ({ isAdmin }) => (
         <Route path="/training/:trainingId" component={TrainingDetails} />
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/exercises" element={<Exercises />} />
-        <Route path="/exercise/:exerciseId" component={ExercisesDetails} />
+        <Route path="/exercisesuser" element={<ExercisesUser />} />
+        <Route path="/exercise/:exerciseId" element={<ExercisesDetails />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/profile" element={<Profile />} />
       </>
