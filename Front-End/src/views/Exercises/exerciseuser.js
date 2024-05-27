@@ -122,7 +122,7 @@ const ExercisesUser = () => {
     <div className="buttons-container">
     <Link to="/exercises" className="buttonAll">Vse vaje</Link>
     <Link to="/exercisesuser" className="buttonAll">Všečkane vaje</Link>
-    <div id="exercises-container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+    <div id="exercises-container" style={{ display: 'flex', flexWrap: 'wrap' }}>
       {exercises.map((exercise) => (
         <div key={exercise._id} className="exercise-card" style={{
           flex: '1 1 calc(25% - 16px)', // 25% width minus margin for spacing
@@ -130,9 +130,7 @@ const ExercisesUser = () => {
           boxSizing: 'border-box'
         }}>
           <div className="exercise-header">
-            <Link to={`/exercise/${exercise._id}`} className="exercise-name-link">
-              {exercise.name}
-            </Link>
+              <h3 className="exercise-name">{exercise.name}</h3>
           </div>
           <div className="exercise-body">
             <p>ID: {exercise._id}</p>
