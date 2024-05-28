@@ -130,8 +130,8 @@ const ExercisesAdmin = () => {
                 <td>{exercise.benefits.join(', ')}</td>
                 <td>{exercise.tips.join(', ')}</td>
                 <td>
-                  <button className="button-edit" onClick={() => handleEditClick(exercise)}>Uredi vajo</button>
-                  <button className="button-delete" onClick={() => handleDeleteExercise(exercise._id)}>Izbriši vajo</button>
+                  <button className="button-edit" onClick={() => handleEditClick(exercise)}>Uredi</button>
+                  <button className="button-delete" onClick={() => handleDeleteExercise(exercise._id)}>Izbriši</button>
                 </td>
             </tr>
         ));
