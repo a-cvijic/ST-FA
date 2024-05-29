@@ -144,6 +144,9 @@ const ExercisesAdmin = () => {
             {isEditing ? (
                 <ExerciseForm
                     exercise={currentExercise}
+                    checkTokenValidity={checkTokenValidity}
+                    setToken={setToken}
+                    refreshToken={refreshToken}
                     token={token}
                     onSubmit={currentExercise ? handleUpdateExercise : handleCreateExercise}
                     onCancel={() => setIsEditing(false)}
@@ -178,7 +181,7 @@ const ExercisesAdmin = () => {
     );
 };
 
-const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
+const ExerciseForm = ({ exercise, token, setToken, refreshToken, checkTokenValidity, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         name: exercise?.name || '',
         description: exercise?.description || '',
@@ -198,6 +201,12 @@ const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleKeyDown = (e) => {
+        if (e.shiftKey && e.key === 'C') {
+            handleSubmit(e);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const data = {
@@ -205,17 +214,23 @@ const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
             benefits: formData.benefits.split(',').map(item => item.trim()),
             tips: formData.tips.split(',').map(item => item.trim())
         };
+        const isValidToken = await checkTokenValidity(token);
+        if (!isValidToken) {
+            const newToken = await refreshToken(token);
+            if (newToken) {
+                setToken(newToken);
+                return handleSubmit(e);
+            } else {
+                console.error('Failed to refresh token');
+                return;
+            }
+        }
         if (exercise) {
             await onSubmit(exercise._id, data);
         } else {
             await onSubmit(data);
         }
         onCancel();
-    };
-    const handleKeyDown = (e) => {
-        if (e.shiftKey && e.key === 'C') {
-            handleSubmit(e);
-        }
     };
 
     return (
