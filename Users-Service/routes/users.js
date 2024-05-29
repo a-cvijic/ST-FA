@@ -27,6 +27,22 @@ router.get('/getUsername', (req, res) => {
   }
 });
 
+router.get('/getId', (req, res) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  if (!token) {
+      return res.status(401).json({ message: 'Token not provided' });
+  }
+
+  try {
+      const decodedToken = jwt.decode(token);
+      const id = decodedToken.id;
+      res.json({ id });
+  } catch (error) {
+      console.error('Error decoding token:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 router.post('/register', async (req, res) => {
   try {
       const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
