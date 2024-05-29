@@ -23,6 +23,7 @@ import TrainingsAdmin from './views/Trainings/trainingsAdmin';
 import RecipesAdmin from './views/Recepies/recepiesAdmin';
 import ExercisesAdmin from './views/Exercises/exercisesAdmin';
 import ChatAdmin from './views/Chat/chatAdmin';
+import ProfileAdmin from './views/Profile/profileAdmin';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -67,6 +68,7 @@ const AuthenticatedRoutes = ({ isAdmin }) => (
       <>
         <Route path="/" element={<HomeAdmin />} />
         <Route path="/home" element={<HomeAdmin />} />
+        <Route path="/users" element={<ProfileAdmin />} />
         <Route path="/trainings" element={<TrainingsAdmin />} />
         <Route path="/recipes" element={<RecipesAdmin />} />
         <Route path="/exercises" element={<ExercisesAdmin />} />
