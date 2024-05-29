@@ -185,7 +185,7 @@ const TrainingDetails = () => {
                             required
                         />
                         <div className="exercise-selection">
-                            <label>Izberite vaje:</label>
+                            <h3>Vaje:</h3>
                             {exercises.map((exercise) => (
                                 <div key={exercise._id}>
                                     <input
@@ -198,8 +198,8 @@ const TrainingDetails = () => {
                                 </div>
                             ))}
                         </div>
-                        <p>Skupno trajanje: {editTraining.total_duration} minut</p>
-                        <p>Skupne kalorije: {editTraining.total_calories}</p>
+                        <p><b>Trajanje:</b> {editTraining.total_duration} minut</p>
+                        <p><b>Kalorije:</b> {editTraining.total_calories}</p>
                         <button type="submit">Shrani</button>
                     </form>
                 </div>
@@ -229,7 +229,7 @@ const TrainingDetails = () => {
                             <td>{formatDate(training.created)} ob {formatTime(training.created)}</td>
                         </tr>
                         <tr>
-                            <td><b>Zadnje spremembe</b></td>
+                            <td><b>Zadnja sprememba</b></td>
                             <td>{formatDate(training.updated)} ob {formatTime(training.updated)}</td>
                         </tr>
                     </tbody>

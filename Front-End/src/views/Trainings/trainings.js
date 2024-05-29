@@ -218,7 +218,7 @@ const Trainings = () => {
             required
           />
           <div className="exercise-selection">
-            <label>Izberite vaje:</label>
+          <h3>Vaje:</h3>
             {exercises.map((exercise) => (
               <div key={exercise._id}>
                 <input
@@ -231,8 +231,8 @@ const Trainings = () => {
               </div>
             ))}
           </div>
-          <p>Skupno trajanje: {newTraining.total_duration} minut</p>
-          <p>Skupne kalorije: {newTraining.total_calories}</p>
+          <p><b>Trajanje:</b> {newTraining.total_duration} minut</p>
+          <p><b>Kalorije:</b> {newTraining.total_calories}</p>
           <button type="submit" style={{ margin: '0px' }}>Dodaj trening</button>
         </form>
       )}
