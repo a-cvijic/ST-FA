@@ -11,6 +11,7 @@ const exercisesURL = 'http://localhost:3000/exercises/';
 const Trainings = () => {
   const [trainings, setTrainings] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [userId, setUserId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [showLikedOnly, setShowLikedOnly] = useState(false);
   const navigate = useNavigate();
@@ -21,7 +22,8 @@ const Trainings = () => {
     description: '',
     total_duration: 0,
     total_calories: 0,
-    exercise_ids: []
+    exercise_ids: [],
+    user_id: '',
   });
 
   useEffect(() => {
@@ -45,10 +47,14 @@ const Trainings = () => {
 
       const exercisesData = await getAllExercises(currentToken);
       setExercises(exercisesData);
+
+      const userId = await getUserIdFromToken(currentToken);
+      setUserId(userId);
     };
 
     fetchData();
   }, [token]);
+
 
 
   // Logic for security and token management
@@ -146,14 +152,12 @@ const Trainings = () => {
   const handleAddTraining = async (event) => {
     event.preventDefault();
     try {
-      const user_id = await getUserIdFromToken(token);
-      console.log(user_id)
-      if (!user_id) {
+      if (!userId) {
         console.error('Neuspešno pridobivanje ID-ja uporabnika iz žetona');
         return;
       }
 
-      const trainingToAdd = { ...newTraining, user_id: user_id };
+      const trainingToAdd = { ...newTraining, user_id: userId };
       const response = await axios.post(baseURL, trainingToAdd, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -165,7 +169,8 @@ const Trainings = () => {
         description: '',
         total_duration: 0,
         total_calories: 0,
-        exercise_ids: []
+        exercise_ids: [],
+        user_id: '',
       });
       console.log('Trening dodan:', response.data);
       setShowAddForm(false);
@@ -175,6 +180,7 @@ const Trainings = () => {
   };
 
   const filteredTrainings = trainings
+    .filter(training => training.user_id === userId.toString())
     .filter(training => training.name.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter(training => !showLikedOnly || training.favourite);
 
