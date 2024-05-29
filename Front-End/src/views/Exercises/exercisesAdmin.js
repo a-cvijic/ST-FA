@@ -74,24 +74,37 @@ const ExercisesAdmin = () => {
 
     const handleDeleteExercise = async (exerciseId) => {
         try {
+            const isValidToken = await checkTokenValidity(token);
+            if (!isValidToken) {
+                const newToken = await refreshToken(token);
+                if (newToken) {
+                    setToken(newToken);
+                    await handleDeleteExercise(exerciseId);
+                    return;
+                } else {
+                    console.error('Failed to refresh token');
+                    return;
+                }
+            }
             await axios.delete(`${baseURL}${exerciseId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchAllExercises(token);
         } catch (error) {
-            console.error('Error deleting exercise:', error);
+            if (error.response && error.response.status === 403) {
+                console.error('Forbidden: You do not have permission to delete exercises.');
+            } else {
+                console.error('Error deleting exercise:', error);
+            }
         }
     };
-
+    
     const handleCreateExercise = async (exerciseData) => {
         try {
-            // Verify if the token is still valid
             const isValidToken = await checkTokenValidity(token);
             if (!isValidToken) {
-                // If token is expired, refresh it
                 const newToken = await refreshToken(token);
                 if (newToken) {
-                    // Update token and retry creating exercise
                     setToken(newToken);
                     await handleCreateExercise(exerciseData);
                     return;
@@ -100,8 +113,6 @@ const ExercisesAdmin = () => {
                     return;
                 }
             }
-    
-            // Token is valid, proceed with creating exercise
             await axios.post(baseURL, exerciseData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -117,14 +128,31 @@ const ExercisesAdmin = () => {
 
     const handleUpdateExercise = async (exerciseId, exerciseData) => {
         try {
+            const isValidToken = await checkTokenValidity(token);
+            if (!isValidToken) {
+                const newToken = await refreshToken(token);
+                if (newToken) {
+                    setToken(newToken);
+                    await handleUpdateExercise(exerciseId, exerciseData);
+                    return;
+                } else {
+                    console.error('Failed to refresh token');
+                    return;
+                }
+            }
             await axios.put(`${baseURL}${exerciseId}`, exerciseData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchAllExercises(token);
         } catch (error) {
-            console.error('Error updating exercise:', error);
+            if (error.response && error.response.status === 403) {
+                console.error('Forbidden: You do not have permission to update exercises.');
+            } else {
+                console.error('Error updating exercise:', error);
+            }
         }
     };
+    
 
     const handleEditClick = (exercise) => {
         setCurrentExercise(exercise);
