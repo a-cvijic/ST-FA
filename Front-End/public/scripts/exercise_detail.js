@@ -65,13 +65,42 @@ const displayExerciseDetails = (exercise) => {
 
         const exerciseDescriptionElement = document.getElementById('exercise-description-content');
         exerciseDescriptionElement.textContent = exercise.description;
+
+        // Populate exercise movement
+        const exerciseMovementElement = document.getElementById('exercise-movement-content');
+        exerciseMovementElement.textContent = exercise.movement;
+
+        // Populate exercise benefits
+        const benefitsList = document.getElementById('exercise-benefits-list');
+        benefitsList.innerHTML = '';
+        exercise.benefits.forEach(benefit => {
+            const li = document.createElement('li');
+            li.textContent = benefit;
+            benefitsList.appendChild(li);
+        });
+
+        // Populate exercise tips
+        const tipsList = document.getElementById('exercise-tips-list');
+        tipsList.innerHTML = '';
+        exercise.tips.forEach(tip => {
+            const li = document.createElement('li');
+            li.textContent = tip;
+            tipsList.appendChild(li);
+        });
+
+        // Populate series and repetitions
+        const seriesElement = document.getElementById('exercise-series');
+        seriesElement.textContent = exercise.series;
+
+        const repetitionsElement = document.getElementById('exercise-repetitions');
+        repetitionsElement.textContent = exercise.repetitions;
     } else {
         // If no exercise details found, display a message
         const exerciseDetailContainer = document.getElementById('exercise-detail');
         exerciseDetailContainer.innerHTML = '<p>No exercise details found.</p>';
-        
     }
 };
+
 
 
 const verifyTokenAndGetExerciseById = async (exerciseId) => {

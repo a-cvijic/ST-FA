@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const trainingSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true // Name is required
+  },
   description: String,
   total_duration: String,
   total_calories: Number,

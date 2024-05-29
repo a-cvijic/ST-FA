@@ -70,51 +70,63 @@ window.onload = () => {
 
 const addToFavourites = async (trainingId, token) => {
     try {
+        // Check if token is expired
         const isValid = await checkTokenValidity(token);
         if (!isValid) {
+            // If token is expired, attempt to refresh it
             const newToken = await refreshToken(token);
             if (newToken) {
+                // If token is successfully refreshed, update the token
                 localStorage.setItem('token', newToken);
-                console.log('Žeton osvežen:', newToken);
+                console.log('Token refreshed:', newToken);
+                // Retry adding to favourites with the new token
                 return addToFavourites(trainingId, newToken);
             } else {
-                console.error('Napaka pri osveževanju žetona');
+                // If token refresh fails, handle the error
+                console.error('Failed to refresh token');
                 return;
             }
         }
 
+        // If token is valid, proceed to add to favourites
+        // Fetch training data from trainings database using the trainingId
         const response = await axios.get(`${baseURL}${trainingId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
         const trainingData = response.data;
-        console.log("Podatki o treningu:", trainingData);
-
+        console.log("Training data:", trainingData);
+  
+        // Extract user name from token
         const userName = await getUsernameFromToken(token);
-        console.log("Uporabniško ime:", userName)
-
+        console.log("User name:", userName);
+  
         if (!userName) {
-            console.error('Napaka pri pridobivanju uporabniškega imena iz žetona');
+            console.error('Failed to get user name from token');
             return;
         }
 
+        // Add user name and training name to training data
         trainingData.userId = userName;
-
+  
+        // Save new document to TrainingUser database
+        delete trainingData._id;
         const saveResponse = await axios.post(`${baseURL}training`, trainingData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log('Trening dodan med priljubljene:', saveResponse.data);
+        console.log('Training added to favorites:', saveResponse.data);
     } catch (error) {
-        if (error.response && error.response.status === 400 && error.response.data.message === 'Vaja je že dodana med všečkane vaje') {
-            alert('Vaja je že dodana med všečkane vaje');
+        if (error.response && error.response.status === 400 && error.response.data.message === 'Trening je že dodan med všečkane treninge') {
+            alert('Trening je že dodan med priljubljene treninge');
         } else {
-            console.error('Napaka pri dodajanju med priljubljene:', error);
+            console.error('Error adding to favorites:', error);
         }
     }
 };
+
 
 const getAllTrainings = async (token) => {
     try {

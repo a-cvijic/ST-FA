@@ -7,6 +7,7 @@ const baseURL = 'http://localhost:3004/trainings/';
 const authURL = 'http://localhost:3010/auth';
 const exercisesURL = 'http://localhost:3000/exercises/';
 
+
 const Trainings = () => {
   const [trainings, setTrainings] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('token'));

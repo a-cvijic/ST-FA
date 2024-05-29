@@ -5,7 +5,7 @@ const trainingUserSchema = new mongoose.Schema({
   description: String,
   total_duration: String,
   total_calories: Number,
-  training_ids: [Number],
+  exercise_ids: [String],
   userId: String
 });
 

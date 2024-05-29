@@ -9,28 +9,28 @@
 <body>
     <header>
         <h1>Opis vaje</h1>
-    <nav>
-        <ul>
-            <li><a href="../homepage.html">Domov</a></li>
-            <li><a href="../trainings.html">Treningi</a></li>
-            <li><a href="../excercises.html">Vaje</a></li>
-            <li><a href="../recipes.html">Recepti</a></li>
-            <li><button id="logout-button">Logout</button></li>
-        </ul>
-    </nav>
-</header>
+        <nav>
+            <ul>
+                <li><a href="../homepage.html">Domov</a></li>
+                <li><a href="../trainings.html">Treningi</a></li>
+                <li><a href="../excercises.html">Vaje</a></li>
+                <li><a href="../recipes.html">Recepti</a></li>
+                <li><button id="logout-button">Logout</button></li>
+                <!-- Navigacija -->
+            </ul>
+        </nav>
+    </header>
+    <!-- Podrobnosti vadbe -->
     <div id="exercise-detail">
-        <h1 id="exercise-name">Dumbbell flat bench press</h1>
+        <h1 id="exercise-name"></h1>
         <div id="exercise-description">
             <h2>Opis</h2>
-            <p id="exercise-description">Dviganje uteži na ravni klopi s pomočjo ročk je odlična vaja za krepitev prsnih mišic, ramen in tricepsov.</p>
+            <p id="exercise-description-content"></p>
         </div>
         <div id="exercise-movement">
             <h2>Gibanje</h2>
-            <p id="exercise-movement">Lezite na ravno klop in v vsako roko vzemite utež z ročajem, pri čemer je ročaj usmerjen naprej. 
-                Postavite stopala na tla in jih poravnajte s koleni (stopala so lahko tudi za njimi). Naredite lok v spodnjem delu hrbta in potisnite prsni koš navzgor. 
-                Dlan naj bo obrnjena naprej. Počasi spustite uteži ven in navzdol do ravni prsi, pri čemer so komolci usmerjeni pod kotom 45 stopinj.</p>
-                <img src="../img/buterfly.gif" class="centered" alt="vaja dumbbell flat bench press">
+            <p id="exercise-movement-content"></p>
+                <img src="../img/buterfly.gif" class="centered" alt="vaja bench press">
         </div>
         <div id="exercise-details">
             <h2>Podrobnosti</h2>
@@ -39,23 +39,20 @@
             <p>Vrsta: <span id="exercise-type"></span></p>
             <p>Težavnost: <span id="exercise-difficulty"></span></p>
             <p>Kratek opis: <span id="exercise-description-content"></span></p>
+            <p>Število serij: <span id="exercise-series"></span></p>
+            <p>Število ponovitev: <span id="exercise-repetitions"></span></p>
         </div>
+        
         <div id="exercise-benefits">
             <h2>Koristi</h2>
-            <ul id="exercise-benefits-list">
-                <li>Pospešuje zdravje srca in ožilja</li>
-                <li>Jačanje prsnega koša in tricepsov</li>
-                <li>Zmanjšuje stres in tesnobo</li>
-            </ul>
+            <ul id="exercise-benefits-list"></ul>
         </div>
         <div id="exercise-tips">
             <h2>Nasveti</h2>
-            <ul id="exercise-tips-list">
-                <li>Ponavadi se izvedejo 3 serije po 3-6 ponovitev</li>
-                <li>Pazite na pravilen kot komolcev (do 45 stopinj)</li>
-            </ul>
+            <ul id="exercise-tips-list"></ul>
         </div>
     </div>
+    <!-- knjižnice in skripte -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../scripts/exercise_detail.js"></script>
     <script src="../scripts/logoutexcercise.js"></script>

@@ -127,32 +127,6 @@ const getExercisesForUser = async (userName, token) => {
     }
 };
 
-const verifyTokenAndDeleteExercises = async (exerciseId) => {
-    const token = localStorage.getItem('token'); // Get token from local storage
-    if (token) {
-        try {
-            const isValid = await checkTokenValidity(token); // Check if token is valid
-            if (!isValid) {
-                const newToken = await refreshToken(token); // Refresh token
-                if (newToken) {
-                    localStorage.setItem('token', newToken); // Update token in local storage
-                    console.log('Nov token:', newToken);
-                    await deleteExercise(exerciseId, newToken); // Delete exercise with refreshed token
-                } else {
-                    console.error('Neuspešno posodabljanje tokena');
-                }
-            } else {
-                console.log('Token je veljaven');
-                await deleteExercise(exerciseId, token); // Delete exercise with existing token
-            }
-        } catch (error) {
-            console.error('Napaka:', error);
-        }
-    } else {
-        console.error('V lokalni shrambi ni tokena');
-    }
-};
-
 const verifyTokenAndFetchExercisesForUser = async () => {
     const token = localStorage.getItem('token'); // Get token from local storage
     if (token) {

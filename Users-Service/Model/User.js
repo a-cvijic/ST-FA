@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
-// Define schema for user collection
 const userSchema = new mongoose.Schema({
+  _id: Number,
   name: String,
   surname: String,
   email: {
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   weight: Number,
 });
 
-// Specify the database name ('users') explicitly
+
 const User = mongoose.model('User', userSchema, 'users');
 
 module.exports = User;

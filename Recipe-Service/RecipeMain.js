@@ -22,12 +22,12 @@ db.once("open", () => {
   console.log("Connected to database");
 });
 
-// Configure VAPID for Web Push Notifications
+/*// Configure VAPID for Web Push Notifications
 webpush.setVapidDetails(
   "mailto:example@example.com",
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY
-);
+);*/
 
 // Use routes
 app.use("/", recipeRoutes);

@@ -1,0 +1,88 @@
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+.buttonAll {
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    background-color: #007BFF;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.buttonAll:hover {
+    background-color: #0056b3;
+}
+
+
+a {
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: gray;
+}
+
+.exercises-container {
+    display:flex;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px; 
+    flex-direction: row;
+    overflow-x: auto;
+}
+
+.exercise-card {
+    width: 85%; 
+    max-width: 500px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 20px auto;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.exercise-header {
+    margin-bottom: 10px;
+}
+
+.exercise-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.exercise-body p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.buttons-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+@media screen and (max-width: 600px) {
+    .exercises-container {
+        padding: 10px;
+    }
+}

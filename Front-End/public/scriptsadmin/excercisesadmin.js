@@ -54,14 +54,14 @@ const getAllExercises = async (token) => {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log('Response:', response.data); // logiranje
+        console.log('Response:', response.data); // logging
         const exercises = response.data;
         const exercisesContainer = document.getElementById('exercises-container');
         exercisesContainer.innerHTML = '';
-        // dinamična izgradnja tabele
+        // dynamic table construction
         const table = document.createElement('table');
         table.classList.add('exercise-table');
-        const tableHeader = document.createElement('tr');//glava tabele
+        const tableHeader = document.createElement('tr');
         tableHeader.innerHTML = `
             <th>Name</th>
             <th>ID</th>
@@ -70,10 +70,12 @@ const getAllExercises = async (token) => {
             <th>Calories</th>
             <th>Type</th>
             <th>Difficulty</th>
+            <th>Series</th>
+            <th>Repetitions</th>
             <th>Actions</th>
         `;
         table.appendChild(tableHeader);
-        exercises.forEach(exercise => { // grem skozi tabele, da naredim vrstice
+        exercises.forEach(exercise => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${exercise.name}</td>
@@ -83,6 +85,8 @@ const getAllExercises = async (token) => {
                 <td>${exercise.calories}</td>
                 <td>${exercise.type}</td>
                 <td>${exercise.difficulty}</td>
+                <td>${exercise.series}</td>
+                <td>${exercise.repetitions}</td>
                 <td>
                     <button onclick="verifyTokenAndGetExerciseById('${exercise._id}')">Edit</button>
                     <button onclick="verifyTokenAndDeleteExercises('${exercise._id}')">Delete</button>
@@ -93,12 +97,13 @@ const getAllExercises = async (token) => {
   
         exercisesContainer.appendChild(table);
         
-        return exercises; // vrnem vaje
+        return exercises; // return exercises
     } catch (error) {
-        console.error('Napaka pri pridobivanju vaj:', error);
+        console.error('Error fetching exercises:', error);
         return null;
     }
-  };
+};
+
 
 // Brisanje vaje glede na id
 const deleteExercise = async (exerciseId, token) => {
@@ -176,7 +181,7 @@ const verifyTokenAndFetchExercises = async () => {
 };
 
 const showPostForm = () => {
-    const formContainer = document.getElementById('post-form-container');//modal za vstavljanje vaje
+    const formContainer = document.getElementById('post-form-container'); // modal za vstavljanje vaje
     formContainer.innerHTML = `
         <h2>New Exercise</h2>
         <form id="post-form">
@@ -192,9 +197,20 @@ const showPostForm = () => {
             <input type="text" id="type" name="type" required>
             <label for="difficulty">Difficulty:</label>
             <input type="text" id="difficulty" name="difficulty" required>
+            <label for="movement">Movement:</label>
+            <textarea id="movement" name="movement" required></textarea>
+            <label for="series">Series:</label>
+            <input type="number" id="series" name="series" required>
+            <label for="repetitions">Repetitions:</label>
+            <input type="number" id="repetitions" name="repetitions" required>
+            <label for="benefits">Benefits (comma-separated):</label>
+            <textarea id="benefits" name="benefits" required></textarea>
+            <label for="tips">Tips (comma-separated):</label>
+            <textarea id="tips" name="tips" required></textarea>
             <button type="submit">Create Exercise</button>
         </form>
     `;
+
     const postForm = document.getElementById('post-form');
     postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -213,7 +229,12 @@ const showPostForm = () => {
                             duration: document.getElementById('duration').value,
                             calories: document.getElementById('calories').value,
                             type: document.getElementById('type').value,
-                            difficulty: document.getElementById('difficulty').value
+                            difficulty: document.getElementById('difficulty').value,
+                            movement: document.getElementById('movement').value,
+                            series: document.getElementById('series').value,
+                            repetitions: document.getElementById('repetitions').value,
+                            benefits: document.getElementById('benefits').value.split(',').map(item => item.trim()),
+                            tips: document.getElementById('tips').value.split(',').map(item => item.trim())
                         };
                         await createExercise(newExerciseData, newToken);
                         await verifyTokenAndFetchExercises();
@@ -228,7 +249,12 @@ const showPostForm = () => {
                         duration: document.getElementById('duration').value,
                         calories: document.getElementById('calories').value,
                         type: document.getElementById('type').value,
-                        difficulty: document.getElementById('difficulty').value
+                        difficulty: document.getElementById('difficulty').value,
+                        movement: document.getElementById('movement').value,
+                        series: document.getElementById('series').value,
+                        repetitions: document.getElementById('repetitions').value,
+                        benefits: document.getElementById('benefits').value.split(',').map(item => item.trim()),
+                        tips: document.getElementById('tips').value.split(',').map(item => item.trim())
                     };
                     await createExercise(newExerciseData, token);
                     await verifyTokenAndFetchExercises();
@@ -241,6 +267,7 @@ const showPostForm = () => {
             console.error('V lokalni shrambi ni tokena');
         }
     });
+
     // Show the modal
     formContainer.style.display = 'block';
 };
@@ -275,6 +302,16 @@ const showEditForm = async (exerciseId) => {
                         <input type="text" id="type" name="type" value="${exercise.type}">
                         <label for="difficulty">Difficulty:</label>
                         <input type="text" id="difficulty" name="difficulty" value="${exercise.difficulty}">
+                        <label for="movement">Movement:</label>
+                        <textarea id="movement" name="movement">${exercise.movement}</textarea>
+                        <label for="benefits">Benefits:</label>
+                        <textarea id="benefits" name="benefits">${exercise.benefits.join('\n')}</textarea>
+                        <label for="tips">Tips:</label>
+                        <textarea id="tips" name="tips">${exercise.tips.join('\n')}</textarea>
+                        <label for="series">Series:</label>
+                        <input type="number" id="series" name="series" value="${exercise.series}">
+                        <label for="repetitions">Repetitions:</label>
+                        <input type="text" id="repetitions" name="repetitions" value="${exercise.repetitions}">
                         <button type="submit">Update Exercise</button>
                     </form>
                 `;
@@ -294,7 +331,12 @@ const showEditForm = async (exerciseId) => {
                                 duration: document.getElementById('duration').value,
                                 calories: document.getElementById('calories').value,
                                 type: document.getElementById('type').value,
-                                difficulty: document.getElementById('difficulty').value
+                                difficulty: document.getElementById('difficulty').value,
+                                movement: document.getElementById('movement').value,
+                                benefits: document.getElementById('benefits').value.split('\n'),
+                                tips: document.getElementById('tips').value.split('\n'),
+                                series: document.getElementById('series').value,
+                                repetitions: document.getElementById('repetitions').value
                             };
                             await updateExercise(exerciseId, updatedExerciseData, newToken);
                             await verifyTokenAndFetchExercises();
@@ -309,17 +351,20 @@ const showEditForm = async (exerciseId) => {
                             duration: document.getElementById('duration').value,
                             calories: document.getElementById('calories').value,
                             type: document.getElementById('type').value,
-                            difficulty: document.getElementById('difficulty').value
+                            difficulty: document.getElementById('difficulty').value,
+                            movement: document.getElementById('movement').value,
+                            benefits: document.getElementById('benefits').value.split('\n'),
+                            tips: document.getElementById('tips').value.split('\n'),
+                            series: document.getElementById('series').value,
+                            repetitions: document.getElementById('repetitions').value
                         };
                         await updateExercise(exerciseId, updatedExerciseData, token);
                         await verifyTokenAndFetchExercises();
-                        location.reload();
                     }
                 });
             } else {
                 console.error('Vaja ni bila najdena');
             }
-            location.reload();
         } catch (error) {
             console.error('Napaka:', error);
         }
@@ -327,6 +372,7 @@ const showEditForm = async (exerciseId) => {
         console.error('V lokalni shrambi ni tokena');
     }
 };
+
 
 
 
