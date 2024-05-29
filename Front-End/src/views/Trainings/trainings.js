@@ -7,10 +7,11 @@ const baseURL = 'http://localhost:3004/trainings/';
 const authURL = 'http://localhost:3010/auth';
 const exercisesURL = 'http://localhost:3000/exercises/';
 
-
 const Trainings = () => {
   const [trainings, setTrainings] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showLikedOnly, setShowLikedOnly] = useState(false);
   const navigate = useNavigate();
   const [showAddForm, setShowAddForm] = useState(false);
   const [exercises, setExercises] = useState([]);
@@ -48,6 +49,7 @@ const Trainings = () => {
     fetchData();
   }, [token]);
 
+  // Logic for security and token management
   const checkTokenValidity = async (token) => {
     try {
       const response = await axios.get(`${authURL}/verify-token`, {
@@ -72,6 +74,22 @@ const Trainings = () => {
     }
   };
 
+  const getUsernameFromToken = async (token) => {
+    try {
+      const response = await axios.get(`${authURL}/getUsername`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.name;
+    } catch (error) {
+      console.error('Napaka pri pridobivanju imena iz žetona:', error);
+      return null;
+    }
+  };
+
+
+  // Logic for trainings
   const getAllTrainings = async (token) => {
     try {
       const response = await axios.get(baseURL, {
@@ -82,20 +100,6 @@ const Trainings = () => {
       return response.data;
     } catch (error) {
       console.error('Napaka pri pridobivanju treningov:', error);
-      return [];
-    }
-  };
-
-  const getAllExercises = async (token) => {
-    try {
-      const response = await axios.get(exercisesURL, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Napaka pri pridobivanju vaj:', error);
       return [];
     }
   };
@@ -167,17 +171,23 @@ const Trainings = () => {
     }
   };
 
-  const getUsernameFromToken = async (token) => {
+  const filteredTrainings = trainings
+    .filter(training => training.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(training => !showLikedOnly || training.favourite);
+
+
+  // Logic for exercises
+  const getAllExercises = async (token) => {
     try {
-      const response = await axios.get(`${authURL}/getUsername`, {
+      const response = await axios.get(exercisesURL, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data.name;
+      return response.data;
     } catch (error) {
-      console.error('Napaka pri pridobivanju imena iz žetona:', error);
-      return null;
+      console.error('Napaka pri pridobivanju vaj:', error);
+      return [];
     }
   };
 
@@ -195,11 +205,15 @@ const Trainings = () => {
     });
   };
 
+
+  // Render HTML content
   return (
     <div id="trainings-container" className="trainings-container">
+
       <button onClick={() => setShowAddForm(!showAddForm)} style={{ float: 'right' }}>
         {showAddForm ? '➖' : '➕'}
       </button>
+
       {showAddForm && (
         <form className="training-form" onSubmit={handleAddTraining}>
           <h2>Dodaj nov trening</h2>
@@ -218,7 +232,7 @@ const Trainings = () => {
             required
           />
           <div className="exercise-selection">
-          <h3>Vaje:</h3>
+            <h3>Vaje:</h3>
             {exercises.map((exercise) => (
               <div key={exercise._id}>
                 <input
@@ -236,7 +250,21 @@ const Trainings = () => {
           <button type="submit" style={{ margin: '0px' }}>Dodaj trening</button>
         </form>
       )}
-      {trainings.map((training) => (
+
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Poišči trening..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <p style={{ float: 'right', marginLeft: '20px' }}>🔎</p>
+        <button onClick={() => setShowLikedOnly(!showLikedOnly)} style={{ marginLeft: '20px' }}>
+          {showLikedOnly ? 'Vsi' : 'Priljubljeni'}
+        </button>
+      </div>
+
+      {filteredTrainings.map((training) => (
         training && (
           <div key={training._id} className="training-card">
             <div className="training-header">
