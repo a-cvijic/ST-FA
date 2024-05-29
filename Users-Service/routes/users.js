@@ -237,4 +237,30 @@ router.delete('/:id', async (req, res) => {
     }
   });
 
+router.put('/profile/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+  
+        const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
+  
+        if (name) user.name = name;
+        if (surname) user.surname = surname;
+        if (email) user.email = email;
+        if (password) user.password = await bcrypt.hash(password, 10);
+        if (birthdate) user.birthdate = birthdate;
+        if (gender) user.gender = gender;
+        if (height) user.height = height;
+        if (weight) user.weight = weight;
+  
+        await user.save();
+        res.json({ message: 'User profile updated successfully' });
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+  
 module.exports = router;

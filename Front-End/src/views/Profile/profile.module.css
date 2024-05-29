@@ -6,6 +6,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 }
 
 h2 {
@@ -27,13 +28,13 @@ h2:after {
 .profileInfo {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     margin: 50px auto;
-    padding: 20px;
+    padding: 30px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
 }
 
@@ -78,8 +79,16 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
 }
 
 #password-form-container {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
 }
 
 #password-form {
@@ -91,5 +100,34 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
 }
 
 #password-form input {
+    margin-bottom: 10px;
+}
+
+.close-btn {
+    align-self: flex-end;
+    cursor: pointer;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: #000;
+}
+
+.instructions {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.instructions ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.instructions li {
     margin-bottom: 10px;
 }

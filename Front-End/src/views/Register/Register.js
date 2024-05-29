@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './register.css'; // Ensure this path is correct
+import './register.css';
 
 const authURL = 'http://localhost:3010/auth';
 
@@ -169,7 +169,6 @@ const Register = () => {
                         value={formData.gender}
                         onChange={handleChange}
                     >
-                        <option value="">Izberi spol</option>
                         <option value="male">Moški</option>
                         <option value="female">Ženska</option>
                         <option value="other">Drugo</option>
@@ -199,6 +198,9 @@ const Register = () => {
                 </div>
                 <div className="form-group">
                     <button type="submit">Registracija</button>
+                </div>
+                <div className="login-link">
+                    <p>Že imaš profil? <a href="/login">Prijavi se tukaj!</a></p>
                 </div>
             </form>
         </div>
