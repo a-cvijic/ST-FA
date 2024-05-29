@@ -76,16 +76,16 @@ const Trainings = () => {
     }
   };
 
-  const getUsernameFromToken = async (token) => {
+  const getUserIdFromToken = async (token) => {
     try {
-      const response = await axios.get(`${authURL}/getUsername`, {
+      const response = await axios.get(`${authURL}/getId`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data.name;
+      return response.data.userId;
     } catch (error) {
-      console.error('Napaka pri pridobivanju imena iz žetona:', error);
+      console.error('Napaka pri pridobivanju ID-ja uporabnika iz žetona:', error);
       return null;
     }
   };
@@ -146,13 +146,13 @@ const Trainings = () => {
   const handleAddTraining = async (event) => {
     event.preventDefault();
     try {
-      const userName = await getUsernameFromToken(token);
-      if (!userName) {
+      const user_id = await getUserIdFromToken(token);
+      if (!user_id) {
         console.error('Neuspešno pridobivanje imena iz žetona');
         return;
       }
 
-      const trainingToAdd = { ...newTraining, user_id: userName };
+      const trainingToAdd = { ...newTraining, user_id: user_id };
       const response = await axios.post(baseURL, trainingToAdd, {
         headers: {
           Authorization: `Bearer ${token}`,
