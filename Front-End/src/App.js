@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 
 import Home from './views/Home/home';
 
-import Training from './views/Trainings/trainings';
-import TrainingDetails from './views/Trainings/trainingsDetails';
+import Trainings from './views/Trainings/trainings';
+import TrainingDetails from './views/Trainings/trainingDetails';
 
 import Recipes from './views/Recepies/recepies';
 
@@ -18,9 +18,8 @@ import Login from './views/Login/login';
 import Register from './views/Register/Register';
 import Navbar from './components/navbar';
 
-
 import HomeAdmin from './views/Home/homeAdmin';
-import TrainingAdmin from './views/Trainings/trainingsAdmin';
+import TrainingsAdmin from './views/Trainings/trainingsAdmin';
 import RecipesAdmin from './views/Recepies/recepiesAdmin';
 import ExercisesAdmin from './views/Exercises/exercisesAdmin';
 import ChatAdmin from './views/Chat/chatAdmin';
@@ -68,7 +67,7 @@ const AuthenticatedRoutes = ({ isAdmin }) => (
       <>
         <Route path="/" element={<HomeAdmin />} />
         <Route path="/home" element={<HomeAdmin />} />
-        <Route path="/training" element={<TrainingAdmin />} />
+        <Route path="/trainings" element={<TrainingsAdmin />} />
         <Route path="/recipes" element={<RecipesAdmin />} />
         <Route path="/exercises" element={<ExercisesAdmin />} />
         <Route path="/chat" element={<ChatAdmin />} />
@@ -78,8 +77,8 @@ const AuthenticatedRoutes = ({ isAdmin }) => (
       <>
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/training" element={<Training />} />
-        <Route path="/training/:trainingId" component={TrainingDetails} />
+        <Route path="/trainings" element={<Trainings />} />
+        <Route path="/training/:trainingId" element={<TrainingDetails />} />
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/exercises" element={<Exercises />} />
         <Route path="/exercisesuser" element={<ExercisesUser />} />

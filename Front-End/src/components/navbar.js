@@ -13,14 +13,14 @@ const Navbar = () => {
         {isAdmin ? (
           <>
             <li><Link to="/users">Uporabniki</Link></li>
-            <li><Link to="/training">Treningi</Link></li>
+            <li><Link to="/trainings">Treningi</Link></li>
             <li><Link to="/recipes">Recepti</Link></li>
             <li><Link to="/exercises">Vaje</Link></li>
             <li><Link to="/chat">Klepet</Link></li>
           </>
         ) : (
           <>
-            <li><Link to="/training">Treningi</Link></li>
+            <li><Link to="/trainings">Treningi</Link></li>
             <li><Link to="/recipes">Recepti</Link></li>
             <li><Link to="/exercises">Vaje</Link></li>
             <li><Link to="/chat">Klepet</Link></li>
