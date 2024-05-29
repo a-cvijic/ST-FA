@@ -18,7 +18,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showInstructions, setShowInstructions] = useState(false);
-  const [activeForm, setActiveForm] = useState(null); // za praćenje aktivnog formulara
+  const [activeForm, setActiveForm] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
