@@ -3,7 +3,7 @@ body.register-page {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
-    background-image: url('https://i.imgur.com/6iRiS8I.jpeg');
+    background-image: url('https://i.imgur.com/FSSYvMW.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -94,6 +94,7 @@ body.register-page {
     color: #000000;
     text-decoration: underline;
     transition: background-color 0.3s;
+    font-size: 100%;
 }
 
 .register-container a:hover {
@@ -140,5 +141,11 @@ body.register-page {
 .register-container .attention {
     color: #000000;
     font-size: 90%;
+    margin-top: 5%;
+}
+
+.register-container .login-link {
+    color: #000000;
+    font-size: 100%;
     margin-top: 5%;
 }
