@@ -23,7 +23,7 @@ Fitness-App (Something For Everyone) is a multi-service application designed to 
 
 - 🏋️‍♂️ **Training Service**
 
-  - Port:
+  - Port: 3004
   - Description: Service for managing training-related functionalities.
 
 - 👤 **Users Service**
@@ -43,7 +43,7 @@ To access each service, navigate to the corresponding port specified above.
 - Exercises: [localhost:3000](http://localhost:3000)
 - ChatBot: [localhost:3001](http://localhost:3001)
 - Recipe: [localhost:3003](http://localhost:3003)
-- Training: 3004?
+- Training: [localhost:3004](http://localhost:3004)
 - Users: [localhost:3010](http://localhost:3010)
 - Frontend: [localhost:2990](http://localhost:2990)
 
@@ -56,9 +56,9 @@ The application follows a modular file structure, with each service having its o
 ## Contributors
 
 - Peter Vezjak
-- Haris Brulic
-- Tamara Jevtic
-- Aleksa Cvijic
+- Haris Brulić
+- Tamara Jevtić
+- Aleksa Cvijić
 
 For any inquiries or issues related to the application, please reach out to us at will-not-reply@student.um.si.com
 
