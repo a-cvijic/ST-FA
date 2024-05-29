@@ -35,7 +35,7 @@ router.get('/getId', (req, res) => {
 
   try {
       const decodedToken = jwt.decode(token);
-      const id = decodedToken.id;
+      const id = decodedToken.userId;
       res.json({ id });
   } catch (error) {
       console.error('Error decoding token:', error);
