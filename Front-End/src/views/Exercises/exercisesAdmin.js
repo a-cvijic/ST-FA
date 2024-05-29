@@ -4,6 +4,7 @@ import './exercisesAdmin.css';
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
+const publicKey = 'BHlaMKbhm8ltFEIrkiKA6b2ir4e480SVN7ezJkTQle141xKm7Pn0PUJ6nvSB1xn6cf51vhKjLeI2d_YBZJiZjeo';
 
 const ExercisesAdmin = () => {
     const [exercises, setExercises] = useState([]);

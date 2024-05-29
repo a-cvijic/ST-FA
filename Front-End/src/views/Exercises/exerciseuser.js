@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
 import './exercises.css';
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
+const publicKey = 'BHlaMKbhm8ltFEIrkiKA6b2ir4e480SVN7ezJkTQle141xKm7Pn0PUJ6nvSB1xn6cf51vhKjLeI2d_YBZJiZjeo';
 
 const checkTokenValidity = async (token) => {
   try {
@@ -87,6 +88,7 @@ const deleteExercise = async (exerciseId, token) => {
 const ExercisesUser = () => {
   const [exercises, setExercises] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,7 +118,20 @@ const ExercisesUser = () => {
     };
 
     verifyTokenAndFetchExercises();
-  }, [token]);
+
+    // Keyboard shortcut setup
+    const handleKeyboardShortcut = (e) => {
+      if (e.shiftKey && e.key === 'A') {
+        navigate('/exercises');
+      } 
+    };
+
+    document.addEventListener('keydown', handleKeyboardShortcut);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardShortcut);
+    };
+  }, [token, navigate]);
 
   return (
     <div className="buttons-container">
