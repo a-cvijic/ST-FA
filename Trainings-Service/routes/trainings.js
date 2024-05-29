@@ -50,7 +50,6 @@ router.post('/', authenticateToken, async (req, res) => {
     newTraining.favourite = false;
     newTraining.created = new Date();
     newTraining.updated = null;
-    newTraining.user_id = req.user.id;
     const createdTraining = await Training.create(newTraining);
     res.status(201).json(createdTraining);
   } catch (error) {
