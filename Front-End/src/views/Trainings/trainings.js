@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './trainings.css';
 import { useNavigate } from 'react-router-dom';
+import annyang from 'annyang';
 
 const baseURL = 'http://localhost:3004/trainings/';
 const authURL = 'http://localhost:3010/auth';
@@ -48,6 +49,7 @@ const Trainings = () => {
 
     fetchData();
   }, [token]);
+
 
   // Logic for security and token management
   const checkTokenValidity = async (token) => {
@@ -206,6 +208,95 @@ const Trainings = () => {
   };
 
 
+  // Logic for speech recognition
+  useEffect(() => {
+    if (annyang) {
+      const commands = {
+        'add training': () => {
+          setShowAddForm(true);
+          speak('Add new training window opened');
+        },
+        'like *name': (name) => {
+          const training = trainings.find(t => t.name.toLowerCase() === name.toLowerCase());
+          if (training && !training.favourite) {
+            addToFavourites(training._id);
+            speak(`${name} liked`);
+          }
+          if (training && training.favourite) {
+            speak(`${name} is already liked`);
+          }
+          if (!training) {
+            speak(`${name} not found`);
+          }
+        },
+        'dislike *name': (name) => {
+          const training = trainings.find(t => t.name.toLowerCase() === name.toLowerCase());
+          if (training && training.favourite) {
+            addToFavourites(training._id);
+            speak(`${name} disliked`);
+          }
+          if (training && !training.favourite) {
+            speak(`${name} is not liked`);
+          }
+          if (!training) {
+            speak(`${name} not found`);
+          }
+        },
+        'go to *name': (name) => {
+          const training = trainings.find(t => t.name.toLowerCase() === name.toLowerCase());
+          if (training) {
+            navigate(`/training/${training._id}`);
+            speak(`Showing ${name} details`);
+          } else {
+            speak(`${name} not found`);
+          }
+        },
+        'show liked': () => {
+          setShowLikedOnly(true);
+          speak('Showing favourite trainings');
+        },
+        'show all': () => {
+          setShowLikedOnly(false);
+          speak('Showing all trainings');
+        },
+        'search for *name': (name) => {
+          if (name === 'all') {
+            setSearchTerm('');
+            speak('Showing all trainings');
+          }
+          else {
+            setSearchTerm(name);
+            speak(`Searching for ${name}`);
+          }
+        }
+      };
+
+      annyang.addCommands(commands);
+      annyang.start();
+      return () => {
+        annyang.removeCommands(Object.keys(commands));
+        annyang.abort();
+      }
+    }
+  }, [trainings, navigate]);
+
+  const speak = (text) => {
+    const synth = window.speechSynthesis;
+    const voices = synth.getVoices();
+    const desiredVoice = voices.find(voice =>
+      voice.name === 'Samantha' && voice.lang === 'en-US'
+    );
+
+    if (desiredVoice) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = desiredVoice;
+      synth.speak(utterance);
+    } else {
+      console.error('Desired voice not found');
+    }
+  };
+
+
   // Render HTML content
   return (
     <div id="trainings-container" className="trainings-container">
@@ -281,7 +372,8 @@ const Trainings = () => {
             </div>
             <div className="training-body">
               <p style={{ color: 'gray' }}>{training.description}</p>
-              <p style={{ color: 'gray' }}>{training.total_duration} minut</p>
+              <br />
+              <p style={{ color: 'gray', float: 'right' }}><b><i>{training.total_duration} minut</i></b></p>
             </div>
           </div>
         )))}
