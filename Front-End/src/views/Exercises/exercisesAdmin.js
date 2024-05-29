@@ -4,7 +4,6 @@ import './exercisesAdmin.css';
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
-const publicKey = 'BHlaMKbhm8ltFEIrkiKA6b2ir4e480SVN7ezJkTQle141xKm7Pn0PUJ6nvSB1xn6cf51vhKjLeI2d_YBZJiZjeo';
 
 const ExercisesAdmin = () => {
     const [exercises, setExercises] = useState([]);
@@ -86,12 +85,33 @@ const ExercisesAdmin = () => {
 
     const handleCreateExercise = async (exerciseData) => {
         try {
+            // Verify if the token is still valid
+            const isValidToken = await checkTokenValidity(token);
+            if (!isValidToken) {
+                // If token is expired, refresh it
+                const newToken = await refreshToken(token);
+                if (newToken) {
+                    // Update token and retry creating exercise
+                    setToken(newToken);
+                    await handleCreateExercise(exerciseData);
+                    return;
+                } else {
+                    console.error('Failed to refresh token');
+                    return;
+                }
+            }
+    
+            // Token is valid, proceed with creating exercise
             await axios.post(baseURL, exerciseData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchAllExercises(token);
         } catch (error) {
-            console.error('Error creating exercise:', error);
+            if (error.response.status === 403) {
+                console.error('Forbidden: You do not have permission to create exercises.');
+            } else {
+                console.error('Error creating exercise:', error);
+            }
         }
     };
 
@@ -144,9 +164,6 @@ const ExercisesAdmin = () => {
             {isEditing ? (
                 <ExerciseForm
                     exercise={currentExercise}
-                    checkTokenValidity={checkTokenValidity}
-                    setToken={setToken}
-                    refreshToken={refreshToken}
                     token={token}
                     onSubmit={currentExercise ? handleUpdateExercise : handleCreateExercise}
                     onCancel={() => setIsEditing(false)}
@@ -181,7 +198,7 @@ const ExercisesAdmin = () => {
     );
 };
 
-const ExerciseForm = ({ exercise, token, setToken, refreshToken, checkTokenValidity, onSubmit, onCancel }) => {
+const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
         name: exercise?.name || '',
         description: exercise?.description || '',
@@ -214,17 +231,6 @@ const ExerciseForm = ({ exercise, token, setToken, refreshToken, checkTokenValid
             benefits: formData.benefits.split(',').map(item => item.trim()),
             tips: formData.tips.split(',').map(item => item.trim())
         };
-        const isValidToken = await checkTokenValidity(token);
-        if (!isValidToken) {
-            const newToken = await refreshToken(token);
-            if (newToken) {
-                setToken(newToken);
-                return handleSubmit(e);
-            } else {
-                console.error('Failed to refresh token');
-                return;
-            }
-        }
         if (exercise) {
             await onSubmit(exercise._id, data);
         } else {
