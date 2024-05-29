@@ -74,36 +74,85 @@ const ExercisesAdmin = () => {
 
     const handleDeleteExercise = async (exerciseId) => {
         try {
+            const isValidToken = await checkTokenValidity(token);
+            if (!isValidToken) {
+                const newToken = await refreshToken(token);
+                if (newToken) {
+                    setToken(newToken);
+                    await handleDeleteExercise(exerciseId);
+                    return;
+                } else {
+                    console.error('Failed to refresh token');
+                    return;
+                }
+            }
             await axios.delete(`${baseURL}${exerciseId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchAllExercises(token);
         } catch (error) {
-            console.error('Error deleting exercise:', error);
+            if (error.response && error.response.status === 403) {
+                console.error('Forbidden: You do not have permission to delete exercises.');
+            } else {
+                console.error('Error deleting exercise:', error);
+            }
         }
     };
-
+    
     const handleCreateExercise = async (exerciseData) => {
         try {
+            const isValidToken = await checkTokenValidity(token);
+            if (!isValidToken) {
+                const newToken = await refreshToken(token);
+                if (newToken) {
+                    setToken(newToken);
+                    await handleCreateExercise(exerciseData);
+                    return;
+                } else {
+                    console.error('Failed to refresh token');
+                    return;
+                }
+            }
             await axios.post(baseURL, exerciseData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchAllExercises(token);
         } catch (error) {
-            console.error('Error creating exercise:', error);
+            if (error.response.status === 403) {
+                console.error('Forbidden: You do not have permission to create exercises.');
+            } else {
+                console.error('Error creating exercise:', error);
+            }
         }
     };
 
     const handleUpdateExercise = async (exerciseId, exerciseData) => {
         try {
+            const isValidToken = await checkTokenValidity(token);
+            if (!isValidToken) {
+                const newToken = await refreshToken(token);
+                if (newToken) {
+                    setToken(newToken);
+                    await handleUpdateExercise(exerciseId, exerciseData);
+                    return;
+                } else {
+                    console.error('Failed to refresh token');
+                    return;
+                }
+            }
             await axios.put(`${baseURL}${exerciseId}`, exerciseData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             await fetchAllExercises(token);
         } catch (error) {
-            console.error('Error updating exercise:', error);
+            if (error.response && error.response.status === 403) {
+                console.error('Forbidden: You do not have permission to update exercises.');
+            } else {
+                console.error('Error updating exercise:', error);
+            }
         }
     };
+    
 
     const handleEditClick = (exercise) => {
         setCurrentExercise(exercise);
@@ -197,6 +246,12 @@ const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleKeyDown = (e) => {
+        if (e.shiftKey && e.key === 'C') {
+            handleSubmit(e);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const data = {
@@ -213,7 +268,7 @@ const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
     };
 
     return (
-        <div className="modal">
+        <div className="modal" onKeyDown={handleKeyDown}>
             <div className="modal-content">
                 <h2>{exercise ? 'Edit Exercise' : 'New Exercise'}</h2>
                 <form onSubmit={handleSubmit}>

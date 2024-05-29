@@ -3,8 +3,10 @@ const Exercise = require('../Model/Exercise');
 const ExerciseUser = require('../Model/ExerciseUser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const webpush = require('web-push');
 const secretKey = process.env.SECRET_KEY;
-
+const publicKey = process.env.PUBLIC_KEY;
+const privateKey = process.env.PRIVATE_KEY;
 
 const router = express.Router();
 
@@ -20,6 +22,49 @@ function authenticateToken(req, res, next) {
         next();
     });
   };
+
+webpush.setVapidDetails(
+  'mailto:your-email@example.com',
+  publicKey,
+  privateKey
+);
+
+// Končna točka za pošiljanje potisnih obvestil
+router.post("/push-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "vadba uspešno vstavljena" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
+router.post("/fetch-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "Uspešno pridobil vadbe" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
+router.post("/delete-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "Uspešno izbrisal vadbo" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
+router.post("/update-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "Uspešno posodobil vadbo" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
 
 
 router.post('/', authenticateToken, async (req, res) => {

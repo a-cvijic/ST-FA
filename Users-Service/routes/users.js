@@ -8,7 +8,7 @@ require('dotenv').config();
 const secretKey = process.env.SECRET_KEY;
 
 function generateToken(user) {
-  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '15s' });
+  return jwt.sign({ userId: user._id, name: user.name }, secretKey, { expiresIn: '1h' });
 }
 
 router.get('/getUsername', (req, res) => {
@@ -21,6 +21,22 @@ router.get('/getUsername', (req, res) => {
       const decodedToken = jwt.decode(token);
       const name = decodedToken.name;
       res.json({ name });
+  } catch (error) {
+      console.error('Error decoding token:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get('/getId', (req, res) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  if (!token) {
+      return res.status(401).json({ message: 'Token not provided' });
+  }
+
+  try {
+      const decodedToken = jwt.decode(token);
+      const id = decodedToken.userId;
+      res.json({ id });
   } catch (error) {
       console.error('Error decoding token:', error);
       res.status(500).json({ message: 'Internal Server Error' });
@@ -237,4 +253,30 @@ router.delete('/:id', async (req, res) => {
     }
   });
 
+router.put('/profile/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+  
+        const { name, surname, email, password, birthdate, gender, height, weight } = req.body;
+  
+        if (name) user.name = name;
+        if (surname) user.surname = surname;
+        if (email) user.email = email;
+        if (password) user.password = await bcrypt.hash(password, 10);
+        if (birthdate) user.birthdate = birthdate;
+        if (gender) user.gender = gender;
+        if (height) user.height = height;
+        if (weight) user.weight = weight;
+  
+        await user.save();
+        res.json({ message: 'User profile updated successfully' });
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+  
 module.exports = router;
