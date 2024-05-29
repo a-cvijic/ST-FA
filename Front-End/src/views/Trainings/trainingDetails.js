@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './trainingDetails.css';
+import annyang from 'annyang';
 
 const baseURL = 'http://localhost:3004/trainings/';
 const authURL = 'http://localhost:3010/auth';
@@ -44,6 +45,8 @@ const TrainingDetails = () => {
         fetchData();
     }, [trainingId, token]);
 
+
+    // Logic for security and token management
     const checkTokenValidity = async (token) => {
         try {
             const response = await axios.get(`${authURL}/verify-token`, {
@@ -68,6 +71,8 @@ const TrainingDetails = () => {
         }
     };
 
+
+    // Logic for trainings
     const getTrainingById = async (trainingId, token) => {
         try {
             const response = await axios.get(`${baseURL}${trainingId}`, {
@@ -80,20 +85,6 @@ const TrainingDetails = () => {
         } catch (error) {
             console.error('Napaka pri pridobivanju podrobnosti treninga:', error);
             return null;
-        }
-    };
-
-    const getAllExercises = async (token) => {
-        try {
-            const response = await axios.get(exercisesURL, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            return response.data;
-        } catch (error) {
-            console.error('Napaka pri pridobivanju vaj:', error);
-            return [];
         }
     };
 
@@ -114,6 +105,9 @@ const TrainingDetails = () => {
     };
 
     const handleDeleteTraining = async () => {
+        const confirmDelete = window.confirm("A ste prepričani da želite izbrisati trening?");
+        if (!confirmDelete) return;
+
         try {
             await axios.delete(`${baseURL}${training._id}`, {
                 headers: {
@@ -124,6 +118,22 @@ const TrainingDetails = () => {
             navigate('/trainings');
         } catch (error) {
             console.error('Napaka pri brisanju treninga:', error);
+        }
+    };
+
+
+    // Logic for exercises
+    const getAllExercises = async (token) => {
+        try {
+            const response = await axios.get(exercisesURL, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Napaka pri pridobivanju vaj:', error);
+            return [];
         }
     };
 
@@ -148,11 +158,53 @@ const TrainingDetails = () => {
         }).join(', ');
     };
 
-    const exerciseNames = getExerciseNames(training ? training.exercise_ids : []);
 
-    if (!training) {
-        return <p>Nalaganje...</p>;
-    }
+    // Logic for speech recognition
+    useEffect(() => {
+        if (annyang) {
+            const commands = {
+                'go back': () => {
+                    navigate(`/trainings`);
+                    speak('Going back to trainings');
+                },
+                'edit training': () => {
+                    setEditMode(true);
+                    speak('Edit training window opened');
+                },
+                'delete training': () => {
+                    speak('Are you sure you want to delete this training?');
+                    handleDeleteTraining();
+                },
+            };
+
+            annyang.addCommands(commands);
+            annyang.start();
+            return () => {
+                annyang.removeCommands(Object.keys(commands));
+                annyang.abort();
+            }
+        }
+    }, [navigate]);
+
+    const speak = (text) => {
+        const synth = window.speechSynthesis;
+        const voices = synth.getVoices();
+        const desiredVoice = voices.find(voice =>
+            voice.name === 'Samantha' && voice.lang === 'en-US'
+        );
+
+        if (desiredVoice) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = desiredVoice;
+            synth.speak(utterance);
+        } else {
+            console.error('Desired voice not found');
+        }
+    };
+
+
+    // Render HTML content
+    const exerciseNames = getExerciseNames(training ? training.exercise_ids : []);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
@@ -163,6 +215,10 @@ const TrainingDetails = () => {
         const options = { hour: 'numeric', minute: 'numeric' };
         return new Date(dateString).toLocaleTimeString(undefined, options);
     };
+
+    if (!training) {
+        return <p>Nalaganje...</p>;
+    }
 
     return (
         <div>
@@ -200,10 +256,12 @@ const TrainingDetails = () => {
                         </div>
                         <p><b>Trajanje:</b> {editTraining.total_duration} minut</p>
                         <p><b>Kalorije:</b> {editTraining.total_calories}</p>
+
                         <button type="submit">Shrani</button>
                     </form>
                 </div>
             )}
+
             <div id="training-detail">
                 <h2>{training.name}</h2>
                 <table>
@@ -234,6 +292,7 @@ const TrainingDetails = () => {
                         </tr>
                     </tbody>
                 </table>
+
                 <button onClick={() => setEditMode(true)}>Uredi</button>
                 <button onClick={handleDeleteTraining} style={{ float: 'right', backgroundColor: '#f04646' }}>Izbriši</button>
             </div>
