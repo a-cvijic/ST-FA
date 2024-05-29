@@ -83,7 +83,7 @@ const Trainings = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data.userId;
+      return response.data.id;
     } catch (error) {
       console.error('Napaka pri pridobivanju ID-ja uporabnika iz žetona:', error);
       return null;
@@ -147,8 +147,9 @@ const Trainings = () => {
     event.preventDefault();
     try {
       const user_id = await getUserIdFromToken(token);
+      console.log(user_id)
       if (!user_id) {
-        console.error('Neuspešno pridobivanje imena iz žetona');
+        console.error('Neuspešno pridobivanje ID-ja uporabnika iz žetona');
         return;
       }
 
