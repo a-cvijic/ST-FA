@@ -212,9 +212,14 @@ const ExerciseForm = ({ exercise, token, onSubmit, onCancel }) => {
         }
         onCancel();
     };
+    const handleKeyDown = (e) => {
+        if (e.shiftKey && e.key === 'C') {
+            handleSubmit(e);
+        }
+    };
 
     return (
-        <div className="modal">
+        <div className="modal" onKeyDown={handleKeyDown}>
             <div className="modal-content">
                 <h2>{exercise ? 'Edit Exercise' : 'New Exercise'}</h2>
                 <form onSubmit={handleSubmit}>
