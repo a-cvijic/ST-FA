@@ -1,0 +1,130 @@
+/* Training Details Container */
+#training-detail {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Training Name */
+#training-detail h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+
+/* Training Details Table */
+#training-detail table {
+    width: 100%;
+    margin-bottom: 30px;
+    border-collapse: collapse;
+    transition: all 0.3s ease;
+}
+
+#training-detail th,
+#training-detail td {
+    padding: 10px;
+    text-align: left;
+}
+
+#training-detail th {
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+#training-detail tr {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#training-detail tr:hover {
+    background-color: #ffedc1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Edit Training Container */
+#edit-training-container {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-training-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+}
+
+.edit-training-form input[type="text"],
+.edit-training-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.edit-training-form button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #FED467;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 20px 0;
+}
+
+.edit-training-form button:hover {
+    background-color: #e3a200;
+}
+
+
+/* Responsive Styles */
+@media screen and (max-width: 600px) {
+    #training-detail {
+        padding: 15px;
+        margin: 20px;
+    }
+
+    #training-detail h2 {
+        font-size: 24px;
+    }
+
+    #training-detail table,
+    #training-detail th,
+    #training-detail td {
+        font-size: 14px;
+    }
+
+    #edit-training-container {
+        padding: 15px;
+        margin: 20px;
+    }
+
+    .edit-training-form h2 {
+        font-size: 20px;
+    }
+
+    .edit-training-form input[type="text"],
+    .edit-training-form input[type="number"] {
+        font-size: 14px;
+    }
+
+    .edit-training-form button {
+        font-size: 14px;
+    }
+}

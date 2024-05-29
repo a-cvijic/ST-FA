@@ -5,9 +5,13 @@ const trainingSchema = new mongoose.Schema({
   description: String,
   total_duration: String,
   total_calories: Number,
-  exercise_ids: [Number]
+  exercise_ids: [String],
+  favourite: Boolean,
+  created: Date,
+  updated: Date,
+  user_id: String,
 });
 
-const Training = mongoose.model('Training', trainingSchema, 'trainings');
+const Training = mongoose.models.Training || mongoose.model('Training', trainingSchema, 'trainings');
 
 module.exports = Training;
