@@ -1,11 +1,25 @@
 require('dotenv').config();
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const Training = require('../Model/Training');
 const jwt = require('jsonwebtoken');
+const webpush = require('web-push');
 const secretKey = process.env.SECRET_KEY;
+const vapidPublicKey = process.env.PUBLIC_KEY;
+const vapidPrivateKey = process.env.PRIVATE_KEY;
 const router = express.Router();
+const app = express();
 
+let subscriptions = [];
+
+app.use(bodyParser.json());
+
+webpush.setVapidDetails(
+  'mailto:user@mail.com',
+  vapidPublicKey,
+  vapidPrivateKey
+);
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -111,6 +125,13 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     res.status(500).send('Napaka pri brisanju treninga');
     next(error);
   }
+});
+
+
+app.post('/subscribe', (req, res) => {
+  const subscription = req.body;
+  subscriptions.push(subscription);
+  res.status(201).json({ message: 'Naročanje na obvestila je uspešno!' });
 });
 
 

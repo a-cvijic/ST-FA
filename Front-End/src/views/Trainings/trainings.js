@@ -1,12 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './trainings.css';
 import { useNavigate } from 'react-router-dom';
 import annyang from 'annyang';
+import axios from 'axios';
+import './trainings.css';
 
 const baseURL = 'http://localhost:3004/trainings/';
 const authURL = 'http://localhost:3010/auth';
 const exercisesURL = 'http://localhost:3000/exercises/';
+
+
+// Logic for notifications
+const requestNotificationPermission = () => {
+  Notification.requestPermission().then(permission => {
+    console.log('Notification permission:', permission);
+    if (permission === "granted") {
+      console.log("Permission granted");
+    } else {
+      console.log("Permission not granted");
+    }
+  });
+};
+
+const showNotification = (title, message) => {
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body: message });
+  }
+};
+
 
 const Trainings = () => {
   const [trainings, setTrainings] = useState([]);
@@ -27,6 +47,7 @@ const Trainings = () => {
   });
 
   useEffect(() => {
+    requestNotificationPermission();
     const fetchData = async () => {
       let currentToken = token;
       const isValid = await checkTokenValidity(currentToken);
@@ -54,7 +75,6 @@ const Trainings = () => {
 
     fetchData();
   }, [token]);
-
 
 
   // Logic for security and token management
@@ -143,9 +163,17 @@ const Trainings = () => {
       });
       const updatedTraining = response.data;
       setTrainings(trainings.map(training => training._id === trainingId ? updatedTraining : training));
-      console.log('Trening dodan med priljubljene:', updatedTraining);
+      if (updatedTraining.favourite === true) {
+        console.log('Trening dodan med priljubljene:', updatedTraining);
+        showNotification('Dodano v priljubljene', 'Vaš trening je uspešno dodan v priljubljene.');
+      }
+      else {
+        console.log('Trening odstranjen iz priljubljenih:', updatedTraining);
+        showNotification('Odstranjeno iz priljubljenih', 'Vaš trening je uspešno odstranjen iz priljubljenih.');
+      }
     } catch (error) {
       console.error('Napaka pri dodajanju med priljubljene:', error);
+      showNotification('Napaka', 'Napaka pri dodajanju treninga v prilubljene. Prosimo poskusite znova.');
     }
   };
 
@@ -173,9 +201,11 @@ const Trainings = () => {
         user_id: '',
       });
       console.log('Trening dodan:', response.data);
+      showNotification('Trening uspešno dodan', 'Vaš trening je uspešno dodan v aplikaciji.');
       setShowAddForm(false);
     } catch (error) {
       console.error('Napaka pri dodajanju treninga:', error);
+      showNotification('Napaka', 'Napaka pri dodajanju treninga v aplikacijo. Prosimo poskusite znova.');
     }
   };
 
@@ -285,7 +315,7 @@ const Trainings = () => {
         annyang.abort();
       }
     }
-  }, [trainings, navigate]);
+  }, [trainings, navigate, addToFavourites]);
 
   const speak = (text) => {
     const synth = window.speechSynthesis;
@@ -302,7 +332,6 @@ const Trainings = () => {
       console.error('Desired voice not found');
     }
   };
-
 
   // Render HTML content
   return (
@@ -362,28 +391,33 @@ const Trainings = () => {
         </button>
       </div>
 
-      {filteredTrainings.map((training) => (
-        training && (
-          <div key={training._id} className="training-card">
-            <div className="training-header">
-              <a
-                href="#"
-                onClick={() => navigate(`/training/${training._id}`)}
-                className="training-name-link"
-              >
-                {training.name}
-              </a>
-              <button onClick={() => addToFavourites(training._id)} style={{ float: 'right' }}>
-                {training.favourite ? '♥' : '♡'}
-              </button>
+      {filteredTrainings.length === 0 ? (
+        <p style={{ color: 'grey' }}>Ni treningov za prikaz</p>
+      ) : (
+        filteredTrainings.map((training) => (
+          training && (
+            <div key={training._id} className="training-card">
+              <div className="training-header">
+                <a
+                  href="#"
+                  onClick={() => navigate(`/training/${training._id}`)}
+                  className="training-name-link"
+                >
+                  {training.name}
+                </a>
+                <button onClick={() => addToFavourites(training._id)} style={{ float: 'right' }}>
+                  {training.favourite ? '♥' : '♡'}
+                </button>
+              </div>
+              <div className="training-body">
+                <p style={{ color: 'gray' }}>{training.description}</p>
+                <br />
+                <p style={{ color: 'gray', float: 'right' }}><b><i>{training.total_duration} minut</i></b></p>
+              </div>
             </div>
-            <div className="training-body">
-              <p style={{ color: 'gray' }}>{training.description}</p>
-              <br />
-              <p style={{ color: 'gray', float: 'right' }}><b><i>{training.total_duration} minut</i></b></p>
-            </div>
-          </div>
-        )))}
+          )
+        ))
+      )}
     </div>
   );
 };
