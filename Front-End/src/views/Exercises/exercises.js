@@ -13,6 +13,26 @@ const Exercises = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isAnnyangActive, setIsAnnyangActive] = useState(false);
   const navigate = useNavigate();
+
+  const numberMap = {
+    'null': 0,
+    'one': 1,
+    'two': 2,
+    'three': 3,
+    'four': 4,
+    'five': 5,
+    'six': 6,
+    'seven': 7,
+    'eight': 8,
+    'nine': 9,
+    'ten': 10,
+    'eleven': 11,
+    'twelve': 12,
+    'thirteen': 13,
+    'fourteen': 14,
+    'fifteen': 15,
+    'sixteen': 16
+  };
   
 
   useEffect(() => {
@@ -40,31 +60,25 @@ const Exercises = () => {
     if (annyang) {
       if (isAnnyangActive) {
         const commands = {
-          'exercise number': () => {
-            const exercisesString = localStorage.getItem('exercises');
-            if (exercisesString) {
-              const exercises = JSON.parse(exercisesString);
-              if (exercises.length > 0) {
-                annyang.pause(); 
-                const exerciseIndex = prompt('Vnesite zaporedno številko vaje (začetek (Bench press predstavlja 0)):');
-                annyang.resume(); 
-                const parsedIndex = parseInt(exerciseIndex);
-                if (!isNaN(parsedIndex) && parsedIndex >= 0 && parsedIndex < exercises.length) {
-                  const selectedExercise = exercises[parsedIndex];
-                  const msg = new SpeechSynthesisUtterance(
-                    `Exercise: ${selectedExercise.name}. Description: ${selectedExercise.description}. Duration: ${selectedExercise.duration} minutes. Calories: ${selectedExercise.calories}. Type: ${selectedExercise.type}. Difficulty: ${selectedExercise.difficulty}.`
-                  );
-                  window.speechSynthesis.speak(msg);
-                } else {
-                  const errorMsg = new SpeechSynthesisUtterance('Nepravilen vnos. Vnesite število');
-                  window.speechSynthesis.speak(errorMsg);
-                }
+          'exercise number *number': (number) => {
+            console.log('Recognized number:', number); 
+          const exercisesString = localStorage.getItem('exercises');
+          if (exercisesString) {
+            const exercises = JSON.parse(exercisesString);
+            const parsedNumber = numberMap[number.toLowerCase()]; // pretvorim besedo v index
+            console.log('Parsed number:', parsedNumber);
+              if (!isNaN(parsedNumber) && parsedNumber >= 0 && parsedNumber < exercises.length) {
+                const selectedExercise = exercises[parsedNumber];
+                const msg = new SpeechSynthesisUtterance(
+                  `Exercise: ${selectedExercise.name}. Description: ${selectedExercise.description}. Duration: ${selectedExercise.duration} minutes. Calories: ${selectedExercise.calories}. Type: ${selectedExercise.type}. Difficulty: ${selectedExercise.difficulty}.`
+                );
+                window.speechSynthesis.speak(msg);
               } else {
-                const errorMsg = new SpeechSynthesisUtterance('Se opravičujem, vaje nisem uspel najti.');
+                const errorMsg = new SpeechSynthesisUtterance('Invalid input. Please provide a valid exercise number.');
                 window.speechSynthesis.speak(errorMsg);
               }
             } else {
-              const errorMsg = new SpeechSynthesisUtterance('Se opravičujem, nisem uspel najti vaje v lokalni shrambi.');
+              const errorMsg = new SpeechSynthesisUtterance('Sorry, could not find exercises in local storage.');
               window.speechSynthesis.speak(errorMsg);
             }
           },
@@ -90,17 +104,15 @@ const Exercises = () => {
               window.speechSynthesis.speak(errorMsg);
             }
           },
-          'favorites': () => {
+          'favorite number *number': (number) => {
+            console.log('Recognized number:', number);
             const exercisesString = localStorage.getItem('exercises');
             if (exercisesString) {
                 const exercises = JSON.parse(exercisesString);
-                if (exercises.length > 0) {
-                    annyang.pause(); 
-                    const exerciseIndex = prompt('Vnesite zaporedno številko vaje (začetek (Bench press predstavlja 0)):');
-                    annyang.resume(); 
-                    const parsedIndex = parseInt(exerciseIndex);
-                    if (!isNaN(parsedIndex) && parsedIndex >= 0 && parsedIndex < exercises.length) {
-                        const selectedExercise = exercises[parsedIndex];
+                if (exercises.length > 0) { 
+                  const parsedNumber = numberMap[number.toLowerCase()];
+                    if (!isNaN(parsedNumber) && parsedNumber >= 0 && parsedNumber < exercises.length) {
+                        const selectedExercise = exercises[parsedNumber];
                         console.log(selectedExercise);
                         addToFavourites(selectedExercise._id);
                     } else {
