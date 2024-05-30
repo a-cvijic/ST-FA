@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate  } from 'react-router-dom';
 import axios from 'axios';
 import './exercises.css';
+import annyang from 'annyang';
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
@@ -88,6 +89,7 @@ const deleteExercise = async (exerciseId, token) => {
 const ExercisesUser = () => {
   const [exercises, setExercises] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [isAnnyangActive, setIsAnnyangActive] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,6 +98,7 @@ const ExercisesUser = () => {
       const userName = await getUsernameFromToken(currentToken);
       const exercisesData = await getExercisesForUser(userName, currentToken);
       setExercises(exercisesData);
+      saveFavouritesToLocal(exercisesData);
     };
 
     const verifyTokenAndFetchExercises = async () => {
@@ -119,6 +122,82 @@ const ExercisesUser = () => {
 
     verifyTokenAndFetchExercises();
 
+    const numberMap = {
+      'null': 0,
+      'one': 1,
+      'two': 2,
+      'three': 3,
+      'four': 4,
+      'five': 5,
+      'six': 6,
+      'seven': 7,
+      'eight': 8,
+      'nine': 9,
+      'ten': 10,
+      'eleven': 11,
+      'twelve': 12,
+      'thirteen': 13,
+      'fourteen': 14,
+      'fifteen': 15,
+      'sixteen': 16
+    };
+
+    if (annyang) {
+      if (isAnnyangActive) {
+        const commands = {
+          'favorite data': () => {
+            const exercisesString = localStorage.getItem('favourite_exercises');
+            if (exercisesString) {
+              const exercises = JSON.parse(exercisesString);
+              if (exercises.length > 0) {
+                const exerciseDataMsg = new SpeechSynthesisUtterance('Tukaj je seznam všečkanih vaj:');
+                window.speechSynthesis.speak(exerciseDataMsg);
+                exercises.forEach((exercise, index) => {
+                  const msg = new SpeechSynthesisUtterance(
+                    `Index ${index}: Exercise: ${exercise.name}.`
+                  );
+                  window.speechSynthesis.speak(msg);
+                });
+              } else {
+                const errorMsg = new SpeechSynthesisUtterance('Se opravičujem, vaje nisem uspel najti.');
+                window.speechSynthesis.speak(errorMsg);
+              }
+            } else {
+              const errorMsg = new SpeechSynthesisUtterance('Se opravičujem, nisem uspel najti vaje v lokalni shrambi.');
+              window.speechSynthesis.speak(errorMsg);
+            }
+          },
+          'remove number *number': (number) => {
+            console.log('Recognized number:', number);
+            const exercisesString = localStorage.getItem('favourite_exercises');
+            if (exercisesString) {
+                const exercises = JSON.parse(exercisesString);
+                if (exercises.length > 0) {
+                  const parsedNumber = numberMap[number.toLowerCase()];
+                    if (!isNaN(parsedNumber) && parsedNumber >= 0 && parsedNumber < exercises.length) {
+                        const selectedExercise = exercises[parsedNumber];
+                        console.log(selectedExercise);
+                        deleteExercise(selectedExercise._id, token);
+                    } else {
+                        const errorMsg = new SpeechSynthesisUtterance('Invalid input. Please provide a valid exercise index.');
+                        window.speechSynthesis.speak(errorMsg);
+                    }
+                } else {
+                    const errorMsg = new SpeechSynthesisUtterance('Se opravičujem, vaje nisem uspel najti.');
+                    window.speechSynthesis.speak(errorMsg);
+                }
+            } else {
+                const errorMsg = new SpeechSynthesisUtterance('Se opravičujem, nisem uspel najti vaje v lokalni shrambi.');
+                window.speechSynthesis.speak(errorMsg);
+            }
+        }
+        };
+        annyang.addCommands(commands);
+        annyang.start();
+      } else {
+        annyang.abort();
+      }
+    }
     // Keyboard shortcut setup
     const handleKeyboardShortcut = (e) => {
       if (e.shiftKey && e.key === 'A') {
@@ -131,9 +210,30 @@ const ExercisesUser = () => {
     return () => {
       document.removeEventListener('keydown', handleKeyboardShortcut);
     };
-  }, [token, navigate]);
+  }, [token, navigate, isAnnyangActive]);
+
+  const toggleAnnyang = () => {
+    setIsAnnyangActive(!isAnnyangActive);
+  };
+
+  const saveFavouritesToLocal = (exercises) => {
+    try {
+      localStorage.setItem('favourite_exercises', JSON.stringify(exercises));
+      console.log('Exercises saved to local storage.');
+    } catch (error) {
+      console.error('Error saving exercises to local storage:', error);
+    }
+  };
 
   return (
+    <div>
+      <label htmlFor="toggleAnnyang">Annyang: </label>
+      <input
+        id="toggleAnnyang"
+        type="checkbox"
+        checked={isAnnyangActive}
+        onChange={toggleAnnyang}
+      />
     <div className="buttons-container">
     <Link to="/exercises" className="buttonAll">Vse vaje</Link>
     <Link to="/exercisesuser" className="buttonAll">Všečkane vaje</Link>
@@ -162,6 +262,7 @@ const ExercisesUser = () => {
           </button>
         </div>
       ))}
+    </div>
     </div>
     </div>
   );
