@@ -72,6 +72,7 @@ const Profile = () => {
             alert('Profil posodobljen!');
             setEditMode(false);
             setActiveForm('profile');
+            setShowSettings(false);
             showNotification('Profil posodobljen!');
         } else {
             alert('Napaka pri posodabljanju profila!');
@@ -81,7 +82,7 @@ const Profile = () => {
     const handlePasswordFormSubmit = async (event) => {
         event.preventDefault();
         if (newPassword !== confirmPassword) {
-            alert('Passwords do not match!');
+            alert('Gesla se ne ujemata! Prosimo, da poskusite znova.');
             return;
         }
         const token = localStorage.getItem('token');
@@ -95,6 +96,7 @@ const Profile = () => {
         } else {
             alert('Napaka pri posodabljanju gesla!');
         }
+        setShowSettings(false);
     };
 
     const handleClosePasswordForm = () => {
@@ -133,12 +135,14 @@ const Profile = () => {
             .then(() => {
                 alert('Mikrofon omogočen! Začnite govoriti, ko vidite rdeči krog v zgornjem desnem kotu.');
                 setShowInstructions(true);
+                setShowSettings(false);
                 setActiveForm('instructions');
             })
             .catch((err) => {
                 alert('Mikrofon ni omogočen! Prosimo, da omogočite mikrofon v nastavitvah brskalnika.');
                 console.error('Error accessing microphone: ', err);
             });
+            setShowSettings(false);
     };
 
     const showNotification = (message) => {

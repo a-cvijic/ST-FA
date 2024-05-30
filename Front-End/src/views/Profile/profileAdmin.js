@@ -129,7 +129,7 @@ const AdminPage = () => {
     }
 
     try {
-      const response = await axios.post(authURL, newUser, {
+      await axios.post(authURL, newUser, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
