@@ -1,19 +1,19 @@
 .profileContainer {
     font-family: 'Montserrat', sans-serif;
     background-color: #f4f4f4;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
+    width: 100%;
 }
 
 h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
+    font-size: 250%;
+    margin-bottom: 20%;
     text-align: center;
-    color: #000;
+    color: #000000;
 }
 
 h2:after {
@@ -29,22 +29,19 @@ h2:after {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 50px auto;
+    justify-content: center;
+    margin: 20px auto;
     padding: 30px;
-    background-color: #fff;
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
+    width: 90%;
+    max-width: 500px;
 }
 
 .profileInfo div {
-    margin-bottom: 25px;
+    margin-bottom: 50px;
     width: 100%;
-}
-
-.profileInfo strong {
-    font-size: 1.2rem;
+    text-align: left;
 }
 
 .editButtons {
@@ -59,7 +56,6 @@ button {
     color: black;
     border: none;
     padding: 10px 20px;
-    cursor: pointer;
     border-radius: 5px;
     font-family: 'Montserrat', sans-serif;
 }
@@ -130,4 +126,42 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
 
 .instructions li {
     margin-bottom: 10px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.settingsButton {
+    background-color: #FED467;
+    color: black;
+    border-radius: 5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    border: 1px #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #909090;
+    font-size: 120%;
+}
+
+.dropdownMenu button {
+    display: block;
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    text-align: center;
+    cursor: pointer;
+}
+
+.dropdownMenu button:hover {
+    background-color: #FED467;
 }

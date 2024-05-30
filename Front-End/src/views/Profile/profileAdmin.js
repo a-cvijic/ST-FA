@@ -18,6 +18,7 @@ const AdminPage = () => {
     weight: ''
   });
   const [newUser, setNewUser] = useState({
+    _id: '',
     name: '',
     surname: '',
     email: '',
@@ -128,7 +129,7 @@ const AdminPage = () => {
     }
 
     try {
-      const response = await axios.post(authURL, newUser, {
+      await axios.post(authURL, newUser, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -214,7 +215,6 @@ const AdminPage = () => {
 
   return (
     <div className={styles.adminContainer}>
-      <h1>Admin Page</h1>
       <div className={styles.addUserButtonContainer}>
         <button onClick={() => { setAddMode(true); setEditMode(false); }}>Dodaj novega uporabnika</button>
         <button onClick={handleEnableMicrophone}>Omogoči mikrofon</button>
