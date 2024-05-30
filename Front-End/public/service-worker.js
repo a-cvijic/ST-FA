@@ -9,6 +9,16 @@ self.addEventListener('install', event => {
   self.addEventListener('activate', event => {
     console.log('Service worker activated');
   });
+
+  self.addEventListener("push", pushEvent => {
+    console.log('Service Worker: Push');
+    const payload = pushEvent.data ? pushEvent.data.text() : "NO PAYLOAD";
+    pushEvent.waitUntil(
+      self.registration.showNotification("Push notification", {
+        body: payload
+      })
+    );
+  });
   
   // Listen for fetch events and respond with cached resources
   self.addEventListener('fetch', event => {

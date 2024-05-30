@@ -4,6 +4,97 @@ import axios from 'axios';
 import './exercises.css';
 import annyang from 'annyang';
 
+// Function to convert base64 string to Uint8Array
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+// Function to send push notification
+async function sendPush(subscription) {
+  try {
+    console.log("Sending Push...");
+    await fetch("http://localhost:3000/exercises/push-notification", {
+      method: "POST",
+      body: JSON.stringify(subscription),
+      headers: {
+        "content-type": "application/json"
+      }
+    });
+    console.log("Push Sent...");
+  } catch (error) {
+    console.error("Error sending push:", error);
+  }
+}
+
+// Function to send fetch notification
+async function sendFetch(subscription) {
+  try {
+    console.log("Sending Fetch...");
+    await fetch("http://localhost:3000/exercises/fetch-notification", {
+      method: "POST",
+      body: JSON.stringify(subscription),
+      headers: {
+        "content-type": "application/json"
+      }
+    });
+    console.log("Fetch Sent...");
+  } catch (error) {
+    console.error("Error sending fetch:", error);
+  }
+}
+
+const subscribeToPushNotifications = async () => {
+  try {
+    // Check if push notification is supported
+    if ('PushManager' in window) {
+      // Get push subscription
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey)
+      });
+      console.log('Push subscription:', subscription);
+
+      // Send the push subscription to the server
+      sendPush(subscription);
+    } else {
+      console.log('Push notifications are not supported.');
+    }
+  } catch (error) {
+    console.error('Error subscribing to push notifications:', error);
+  }
+};
+
+const subscribeToFetchNotifications = async () => {
+  try {
+    // preverim, če so push obvestila podprta
+    if ('PushManager' in window) {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({      // dobim subscription
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey)
+      });
+      console.log('Push subscription:', subscription);
+      sendFetch(subscription);      // pošljem subscription na server
+    } else {
+      console.log('Push notifications are not supported.');
+    }
+  } catch (error) {
+    console.error('Error subscribing to push notifications:', error);
+  }
+};
+
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
 const publicKey = 'BHlaMKbhm8ltFEIrkiKA6b2ir4e480SVN7ezJkTQle141xKm7Pn0PUJ6nvSB1xn6cf51vhKjLeI2d_YBZJiZjeo';
@@ -54,8 +145,8 @@ const Exercises = () => {
       setExercises(exercisesData);
       saveExercisesToLocal(exercisesData);
     };
-
     fetchData();
+    subscribeToFetchNotifications();
 
     if (annyang) {
       if (isAnnyangActive) {
@@ -236,6 +327,10 @@ const Exercises = () => {
         },
       });
       console.log('Exercise added to favorites:', saveResponse.data);
+      const subscription = await subscribeToPushNotifications();
+      if (subscription) {
+        await sendPush(subscription);
+      }
     } catch (error) {
       if (error.response && error.response.status === 400 && error.response.data.message === 'Vaja je že dodana med všečkane vaje') {
         alert('Vaja je že dodana med všečkane vaje');
