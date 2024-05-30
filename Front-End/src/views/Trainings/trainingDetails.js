@@ -8,6 +8,26 @@ const baseURL = 'http://localhost:3004/trainings/';
 const authURL = 'http://localhost:3010/auth';
 const exercisesURL = 'http://localhost:3000/exercises/';
 
+
+// Logic for notifications
+const requestNotificationPermission = () => {
+    Notification.requestPermission().then(permission => {
+        console.log('Notification permission:', permission);
+        if (permission === "granted") {
+            console.log("Permission granted");
+        } else {
+            console.log("Permission not granted");
+        }
+    });
+};
+
+const showNotification = (title, message) => {
+    if (Notification.permission === 'granted') {
+        new Notification(title, { body: message });
+    }
+};
+
+
 const TrainingDetails = () => {
     const { trainingId } = useParams();
     console.log('ID treninga:', trainingId);
@@ -20,6 +40,7 @@ const TrainingDetails = () => {
     const [exercises, setExercises] = useState([]);
 
     useEffect(() => {
+        requestNotificationPermission()
         const fetchData = async () => {
             const isValid = await checkTokenValidity(token);
             if (!isValid) {
@@ -71,7 +92,6 @@ const TrainingDetails = () => {
         }
     };
 
-
     // Logic for trainings
     const getTrainingById = async (trainingId, token) => {
         try {
@@ -99,8 +119,10 @@ const TrainingDetails = () => {
             setTraining(response.data);
             setEditMode(false);
             console.log('Trening posodobljen:', response.data);
+            showNotification('Trening uspešno urejen', 'Vaš trening je uspešno posodobljen in shranjen v aplikaciji.');
         } catch (error) {
             console.error('Napaka pri posodabljanju treninga:', error);
+            showNotification('Napaka', 'Napaka pri urejanju treninga v aplikaciji. Prosimo poskusite znova.');
         }
     };
 
@@ -115,9 +137,11 @@ const TrainingDetails = () => {
                 },
             });
             console.log('Trening izbrisan');
+            showNotification('Trening uspešno zbrisan', 'Vaš trening je uspešno zbrisan iz aplikacije.');
             navigate('/trainings');
         } catch (error) {
             console.error('Napaka pri brisanju treninga:', error);
+            showNotification('Napaka', 'Napaka pri brisanju treninga v aplikaciji. Prosimo poskusite znova.');
         }
     };
 
