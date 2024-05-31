@@ -46,7 +46,7 @@ const Trainings = () => {
     user_id: '',
   });
 
-  useEffect(() => {    
+  useEffect(() => {
     requestNotificationPermission();
     const fetchData = async () => {
       let currentToken = token;
