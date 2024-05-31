@@ -22,11 +22,8 @@ function authenticateToken(req, res, next) {
 }
 
 // Send a push notification
-async function sendPushNotification() {
-  const notificationPayload = JSON.stringify({
-    title: "New Recipe Added",
-    body: "A new recipe has been added to your collection!",
-  });
+async function sendPushNotification(payload) {
+  const notificationPayload = JSON.stringify(payload);
 
   try {
     const subscriptions = await Subscription.find();
@@ -65,7 +62,10 @@ router.post("/recipes", authenticateToken, async (req, res) => {
     const recipe = new Recipe(req.body);
     await recipe.save();
     res.status(201).json({ message: "Recipe created successfully", recipe });
-    sendPushNotification(); // Send push notification after recipe is created
+    sendPushNotification({
+      title: "New Recipe Added",
+      body: "A new recipe has been added to your collection!",
+    }); // Send notification
   } catch (err) {
     res.status(500).json({ error: "Failed to create recipe" });
   }
@@ -104,6 +104,10 @@ router.put("/recipes/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Recipe not found" });
     }
     res.json({ message: "Recipe updated successfully", recipe });
+    sendPushNotification({
+      title: "Recipe Updated",
+      body: "A recipe has been updated in your collection!",
+    });
   } catch (err) {
     res.status(500).json({ error: "Failed to update recipe" });
   }
@@ -117,6 +121,10 @@ router.delete("/recipes/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Recipe not found" });
     }
     res.json({ message: "Recipe deleted successfully" });
+    sendPushNotification({
+      title: "Recipe Deleted",
+      body: "A recipe has been deleted from your collection!",
+    });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete recipe" });
   }
