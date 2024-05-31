@@ -1,0 +1,121 @@
+.adminContainer {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  h1, h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .userList {
+    margin-bottom: 20px;
+  }
+  
+  .userList h2 {
+    margin-bottom: 10px;
+  }
+  
+  .userList ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .userList ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 5px;
+  }
+  
+  .userList button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #FED467;
+    color: #000;
+    cursor: pointer;
+  }
+  
+  .userList button:hover {
+    background-color: #FECF43;
+  }
+
+  .editForm, .addUserForm {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+  
+.editForm h2, .addUserForm h2 {
+    margin-bottom: 10px;
+}
+  
+.editForm input, .addUserForm input {
+    width: calc(100% - 20px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+  
+.editForm button, .addUserForm button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+  
+.editForm button:hover, .addUserForm button:hover {
+    background-color: #0056b3;
+}
+  
+.addUserButtonContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.settingsButton {
+    background-color: #FED467;
+    color: black;
+    border-radius: 5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    border: 1px #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #909090;
+    font-size: 120%;
+}
+
+.dropdownMenu button {
+    display: block;
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    text-align: center;
+    cursor: pointer;
+}
+
+.dropdownMenu button:hover {
+    background-color: #FED467;
+}

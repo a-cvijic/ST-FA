@@ -1,9 +1,12 @@
 const express = require('express');
 const Exercise = require('../Model/Exercise');
+const ExerciseUser = require('../Model/ExerciseUser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const webpush = require('web-push');
 const secretKey = process.env.SECRET_KEY;
-
+const publicKey = process.env.PUBLIC_KEY;
+const privateKey = process.env.PRIVATE_KEY;
 
 const router = express.Router();
 
@@ -15,9 +18,54 @@ function authenticateToken(req, res, next) {
     jwt.verify(token, secretKey, (err, user) => {
         if (err) return res.sendStatus(403);
         req.user = user;
+        console.log(req.user);
         next();
     });
-  }
+  };
+
+webpush.setVapidDetails(
+  'mailto:your-email@example.com',
+  publicKey,
+  privateKey
+);
+
+// Končna točka za pošiljanje potisnih obvestil
+router.post("/push-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "vadba uspešno vstavljena" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
+router.post("/fetch-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "Uspešno pridobil vadbe" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
+router.post("/delete-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "Uspešno izbrisal vadbo" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
+router.post("/update-notification", (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({ title: "Uspešno posodobil vadbo" });
+  webpush
+    .sendNotification(subscription, payload)
+    .catch(err => console.error(err));
+});
+
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
@@ -29,6 +77,48 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/excercise', authenticateToken, async (req, res) => {
+  try {
+      const { name, userId } = req.body;
+      
+      // Check if the exercise already exists for this user
+      const existingExercise = await ExerciseUser.findOne({ name, userId });
+      
+      if (existingExercise) {
+          return res.status(400).send({ message: 'Vaja je že dodana med všečkane vaje' });
+      }
+      
+      const exercise = new ExerciseUser(req.body);
+      await exercise.save();
+      res.send(exercise);
+  } catch (error) {
+      res.status(500).send(error);
+  }
+});
+
+
+
+router.get('/exercise/:name', authenticateToken, async (req, res) => {
+  try {
+      const userName = req.params.name; // Extract the user name from the request parameters
+      console.log(userName);
+      const exercises = await ExerciseUser.find({ userId: userName });
+      res.send(exercises);
+  } catch (error) {
+      res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
+router.get('/exercise', authenticateToken, async (req, res) => {
+  try {
+    const exercises = await ExerciseUser.find();
+    res.send(exercises);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const exercises = await Exercise.find();
@@ -37,6 +127,8 @@ router.get('/', authenticateToken, async (req, res) => {
     res.send(error);
   }
 });
+
+
 
 router.get('/:id', authenticateToken, async (req, res) => {
   try {
@@ -65,6 +157,18 @@ router.put('/:id', authenticateToken, async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const exercise = await Exercise.findByIdAndDelete(req.params.id);
+    if (!exercise) {
+      return res.send({ message: 'Exercise not found' });
+    }
+    res.send(exercise);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.delete('/exercise/:id', authenticateToken, async (req, res) => {
+  try {
+    const exercise = await ExerciseUser.findByIdAndDelete(req.params.id);
     if (!exercise) {
       return res.send({ message: 'Exercise not found' });
     }

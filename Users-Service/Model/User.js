@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
   weight: Number,
 });
 
+<<<<<<< HEAD
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
@@ -30,5 +31,9 @@ userSchema.pre('save', async function (next) {
 });
 
 const User = mongoose.model('User', userSchema);
+=======
+
+const User = mongoose.model('User', userSchema, 'users');
+>>>>>>> origin/main
 
 module.exports = User;
