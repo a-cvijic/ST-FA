@@ -158,6 +158,10 @@ const TrainingsAdmin = () => {
 
 
   // Render HTML content
+  if (!trainings) {
+    return <p>Nalaganje...</p>;
+  }
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options).replace(/\//g, '.');
@@ -187,7 +191,7 @@ const TrainingsAdmin = () => {
         filteredTrainings.map((training) => (
           training && (
             <div key={training._id} className="training-card">
-              <div className="training-header">
+              <div className="training-header-admin">
                 <h3>
                   {training.name}
                 </h3>

@@ -334,11 +334,17 @@ const Trainings = () => {
   };
 
   // Render HTML content
+  if (!trainings) {
+    return <p>Nalaganje...</p>;
+  }
+
   return (
     <div id="trainings-container" className="trainings-container">
 
-      <button onClick={() => setShowAddForm(!showAddForm)} style={{ float: 'right' }}>
-        {showAddForm ? '➖' : '➕'}
+      <h2>Treningi</h2>
+
+      <button onClick={() => setShowAddForm(!showAddForm)}>
+        {showAddForm ? '➖' : 'Prikaži obrazec za dodajanje treninga'}
       </button>
 
       {showAddForm && (
