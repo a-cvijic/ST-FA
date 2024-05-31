@@ -1,8 +1,7 @@
-// Login.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './login.css'; // Ensure this path is correct
+import './login.css';
 
 const authURL = 'http://localhost:3010/auth';
 
@@ -37,7 +36,7 @@ const Login = () => {
     const token = await login(email, password);
     if (token) {
       localStorage.setItem('token', token);
-      localStorage.setItem('isAdmin', email === 'admin@gmail.com'); // Set admin flag
+      localStorage.setItem('isAdmin', email === 'admin@gmail.com');
       console.log('Token accepted and stored:', token);
       if (email === 'admin@gmail.com') {
         navigate('/admin');

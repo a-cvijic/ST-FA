@@ -12,21 +12,25 @@ const secretKey = process.env.SECRET_KEY;
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.sendStatus(401);
+  if (token == null) {
+    console.log("No token provided");
+    return res.sendStatus(401);
+  }
 
   jwt.verify(token, secretKey, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err) {
+      console.log("Token verification failed", err);
+      return res.sendStatus(403);
+    }
     req.user = user;
+    console.log("Authenticated user:", req.user);
     next();
   });
 }
 
 // Send a push notification
-async function sendPushNotification() {
-  const notificationPayload = JSON.stringify({
-    title: "New Recipe Added",
-    body: "A new recipe has been added to your collection!",
-  });
+async function sendPushNotification(payload) {
+  const notificationPayload = JSON.stringify(payload);
 
   try {
     const subscriptions = await Subscription.find();
@@ -49,6 +53,7 @@ async function sendPushNotification() {
 // Subscribe to push notifications
 router.post("/subscribe", async (req, res) => {
   try {
+    console.log("Subscription request body:", req.body);
     const subscription = new Subscription(req.body.subscription);
     await subscription.save();
     res.status(201).json({ message: "Subscription added successfully" });
@@ -62,11 +67,16 @@ router.post("/subscribe", async (req, res) => {
 // Create a new recipe
 router.post("/recipes", authenticateToken, async (req, res) => {
   try {
+    console.log("Create recipe request body:", req.body);
     const recipe = new Recipe(req.body);
     await recipe.save();
     res.status(201).json({ message: "Recipe created successfully", recipe });
-    sendPushNotification(); // Send push notification after recipe is created
+    sendPushNotification({
+      title: "New Recipe Added",
+      body: "A new recipe has been added to your collection!",
+    }); // Send notification
   } catch (err) {
+    console.error("Failed to create recipe", err);
     res.status(500).json({ error: "Failed to create recipe" });
   }
 });
@@ -74,9 +84,11 @@ router.post("/recipes", authenticateToken, async (req, res) => {
 // Read all recipes
 router.get("/recipes", authenticateToken, async (req, res) => {
   try {
+    console.log("Fetching all recipes");
     const recipes = await Recipe.find();
     res.json(recipes);
   } catch (err) {
+    console.error("Failed to retrieve recipes", err);
     res.status(500).json({ error: "Failed to retrieve recipes" });
   }
 });
@@ -84,12 +96,14 @@ router.get("/recipes", authenticateToken, async (req, res) => {
 // Read a specific recipe by ID
 router.get("/recipes/:id", authenticateToken, async (req, res) => {
   try {
+    console.log("Fetching recipe with ID:", req.params.id);
     const recipe = await Recipe.findById(req.params.id);
     if (!recipe) {
       return res.status(404).json({ error: "Recipe not found" });
     }
     res.json(recipe);
   } catch (err) {
+    console.error("Failed to retrieve recipe", err);
     res.status(500).json({ error: "Failed to retrieve recipe" });
   }
 });
@@ -97,6 +111,12 @@ router.get("/recipes/:id", authenticateToken, async (req, res) => {
 // Update a recipe by ID
 router.put("/recipes/:id", authenticateToken, async (req, res) => {
   try {
+    console.log(
+      "Updating recipe with ID:",
+      req.params.id,
+      "with body:",
+      req.body
+    );
     const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -104,7 +124,12 @@ router.put("/recipes/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Recipe not found" });
     }
     res.json({ message: "Recipe updated successfully", recipe });
+    sendPushNotification({
+      title: "Recipe Updated",
+      body: "A recipe has been updated in your collection!",
+    });
   } catch (err) {
+    console.error("Failed to update recipe", err);
     res.status(500).json({ error: "Failed to update recipe" });
   }
 });
@@ -112,12 +137,18 @@ router.put("/recipes/:id", authenticateToken, async (req, res) => {
 // Delete a recipe by ID
 router.delete("/recipes/:id", authenticateToken, async (req, res) => {
   try {
+    console.log("Deleting recipe with ID:", req.params.id);
     const recipe = await Recipe.findByIdAndDelete(req.params.id);
     if (!recipe) {
       return res.status(404).json({ error: "Recipe not found" });
     }
     res.json({ message: "Recipe deleted successfully" });
+    sendPushNotification({
+      title: "Recipe Deleted",
+      body: "A recipe has been deleted from your collection!",
+    });
   } catch (err) {
+    console.error("Failed to delete recipe", err);
     res.status(500).json({ error: "Failed to delete recipe" });
   }
 });

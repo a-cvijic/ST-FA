@@ -12,22 +12,19 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB initialization
-mongoose.connect(process.env.MONGO_URI_RECIPE, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGO_URI_RECIPE, {});
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection error:"));
 db.once("open", () => {
   console.log("Connected to database");
 });
 
-/*// Configure VAPID for Web Push Notifications
+// Vapid keys for web push notifications
 webpush.setVapidDetails(
   "mailto:example@example.com",
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY
-);*/
+);
 
 // Use routes
 app.use("/", recipeRoutes);
