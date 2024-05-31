@@ -127,7 +127,7 @@ const TrainingDetails = () => {
     };
 
     const handleDeleteTraining = async () => {
-        const confirmDelete = window.confirm("A ste prepričani da želite izbrisati trening?");
+        const confirmDelete = window.confirm("Ali ste prepričani da želite izbrisati trening?");
         if (!confirmDelete) return;
 
         try {
@@ -137,7 +137,7 @@ const TrainingDetails = () => {
                 },
             });
             console.log('Trening izbrisan');
-            showNotification('Trening uspešno zbrisan', 'Vaš trening je uspešno zbrisan iz aplikacije.');
+            showNotification('Trening uspešno izbrisan', 'Vaš trening je uspešno izbrisan iz aplikacije.');
             navigate('/trainings');
         } catch (error) {
             console.error('Napaka pri brisanju treninga:', error);
@@ -208,7 +208,7 @@ const TrainingDetails = () => {
                 annyang.abort();
             }
         }
-    }, [navigate]);
+    }, [navigate, handleDeleteTraining, setEditMode]);
 
     const speak = (text) => {
         const synth = window.speechSynthesis;
@@ -239,10 +239,6 @@ const TrainingDetails = () => {
         const options = { hour: 'numeric', minute: 'numeric' };
         return new Date(dateString).toLocaleTimeString(undefined, options);
     };
-
-    if (!training) {
-        return <p>Nalaganje...</p>;
-    }
 
     return (
         <div>
@@ -312,7 +308,7 @@ const TrainingDetails = () => {
                         </tr>
                         <tr>
                             <td><b>Zadnja sprememba</b></td>
-                            <td>{formatDate(training.updated)} ob {formatTime(training.updated)}</td>
+                            <td>{training.updated ? `${formatDate(training.updated)} ob ${formatTime(training.updated)}` : 'Nikoli'}</td>
                         </tr>
                     </tbody>
                 </table>
