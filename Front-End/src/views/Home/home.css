@@ -65,7 +65,7 @@ h2 {
 }
 
 
-.card {
+.card-user {
     width: 100%;
     max-width: 320px;
     background-color: #fff;
@@ -76,17 +76,17 @@ h2 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+.card-user:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-.card h3 {
+.card-user h3 {
     margin-top: 0;
     color: #333;
 }
 
-.card p {
+.card-user p {
     margin: 8px 0;
     color: #555;
 }
@@ -107,7 +107,7 @@ h2 {
         padding: 10px;
     }
 
-    .card {
+    .card-user {
         width: 100%;
         margin: 10px 0;
     }
