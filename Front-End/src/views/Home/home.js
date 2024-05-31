@@ -4,9 +4,9 @@ import axios from 'axios';
 import './home.css';
 
 const authURL = 'http://localhost:3010/auth';
-const trainingsURL = 'http://localhost:3004/trainings/';
-const exercisesURL = 'http://localhost:3000/exercises/';
-const recipesURL = 'http://localhost:3003/recipes/';
+const trainingsURL = 'http://localhost:3004/trainings';
+const exercisesURL = 'http://localhost:3000/exercises';
+const recipesURL = 'http://localhost:3003/recipes';
 
 const Home = () => {
   const [userName, setUserName] = useState('');
