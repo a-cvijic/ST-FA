@@ -14,7 +14,7 @@
 #training-detail h2 {
     font-size: 28px;
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     text-align: center;
 }
 
@@ -84,7 +84,7 @@
 .edit-training-form button {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 12px;
     background-color: #FED467;
     border: none;
     border-radius: 5px;

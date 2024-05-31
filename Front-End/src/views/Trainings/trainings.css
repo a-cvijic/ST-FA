@@ -25,7 +25,7 @@ body {
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 12px;
     transition: background-color 0.3s ease;
 }
 
@@ -71,7 +71,7 @@ body {
 .training-form button {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 12px;
     background-color: #FED467;
     border: none;
     border-radius: 5px;
@@ -88,7 +88,7 @@ body {
 }
 
 .exercise-selection label {
-    font-size: 16px;
+    font-size: 12px;
     color: #333;
     margin-bottom: 5px;
     display: block;
@@ -114,7 +114,7 @@ body {
 
 .training-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
 .training-header {
@@ -163,7 +163,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 
@@ -183,6 +183,6 @@ body {
     }
 
     .training-body p {
-        font-size: 16px;
+        font-size: 12px;
     }
 }

@@ -228,6 +228,10 @@ const TrainingDetails = () => {
 
 
     // Render HTML content
+    if (!training) {
+        return <p>Nalaganje...</p>;
+    }
+
     const exerciseNames = getExerciseNames(training ? training.exercise_ids : []);
 
     const formatDate = (dateString) => {
@@ -314,7 +318,7 @@ const TrainingDetails = () => {
                 </table>
 
                 <button onClick={() => setEditMode(true)}>Uredi</button>
-                <button onClick={handleDeleteTraining} style={{ float: 'right', backgroundColor: '#f04646' }}>Izbriši</button>
+                <button onClick={handleDeleteTraining} style={{ float: 'right', backgroundColor: '#f04646', color: 'white' }}>Izbriši</button>
             </div>
         </div>
     );
