@@ -83,7 +83,7 @@ const Home = () => {
             <p style={{ color: 'grey' }}>Ni podatkov za prikaz</p>
           ) : (
             featuredTrainings.map((training) => (
-              <div key={training._id} className="card">
+              <div key={training._id} className="card-user">
                 <h3>{training.name}</h3>
                 <p>{training.description}</p>
                 <p><strong>Trajanje:</strong> {training.total_duration} minut</p>
@@ -104,7 +104,7 @@ const Home = () => {
             <p style={{ color: 'grey' }}>Ni podatkov za prikaz</p>
           ) : (
             featuredExercises.map((exercise) => (
-              <div key={exercise._id} className="card">
+              <div key={exercise._id} className="card-user">
                 <h3>{exercise.name}</h3>
                 <p>{exercise.description}</p>
                 <p><strong>Trajanje:</strong> {exercise.duration} minut</p>
@@ -125,7 +125,7 @@ const Home = () => {
             <p style={{ color: 'grey' }}>Ni podatkov za prikaz</p>
           ) : (
             featuredRecipes.map((recipe) => (
-              <div key={recipe._id} className="card">
+              <div key={recipe._id} className="card-user">
                 <h3>{recipe.name}</h3>
                 <p>{recipe.description}</p>
                 <p><strong>Kalorije:</strong> {recipe.calories}</p>
