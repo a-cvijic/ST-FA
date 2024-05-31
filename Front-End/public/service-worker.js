@@ -28,6 +28,17 @@ const urlsToCache = [
   '/src/views/Profile/profile.js',
   '/src/views/Profile/profileAdmin.js',
   '/src/views/Profile/profileAdmin.css',
+
+  //exercise-service
+  '/src/views/Exercises/excercise_details.css',
+  '/src/views/Exercises/exercises.css',
+  '/src/views/Exercises/exercises.js',
+  '/src/views/Exercises/exercisesAdmin.css',
+  '/src/views/Exercises/exercisesAdmin.js',
+  '/src/views/Exercises/exercisesDetails.js',
+  '/src/views/Exercises/exerciseuser.js',
+  '/src/views/Exercises/loadGifs.js',
+  '/src/views/Exercises/gifs/*.gif'
 ];
 
 self.addEventListener('install', event => {
