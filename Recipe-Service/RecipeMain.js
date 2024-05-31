@@ -12,10 +12,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB initialization
-mongoose.connect(process.env.MONGO_URI_RECIPE, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGO_URI_RECIPE, {});
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Connection error:"));
 db.once("open", () => {
