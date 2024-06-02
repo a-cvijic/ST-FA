@@ -1,9 +1,9 @@
-// Navbar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './navbar.css';
+import '../App.js';
 
-const Navbar = () => {
+const Navbar = ({ handleLogout }) => {
   const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
   return (
@@ -27,6 +27,7 @@ const Navbar = () => {
             <li><Link to="/profile">Profil</Link></li>
           </>
         )}
+        <li><button onClick={handleLogout} className="logout-button">Odjava</button></li>
       </ul>
     </nav>
   );

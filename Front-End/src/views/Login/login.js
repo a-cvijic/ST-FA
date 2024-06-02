@@ -15,7 +15,7 @@ const login = async (email, password) => {
     }
 };
 
-const Login = () => {
+const Login = ({ setIsAuthenticated, setIsAdmin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -36,13 +36,12 @@ const Login = () => {
     const token = await login(email, password);
     if (token) {
       localStorage.setItem('token', token);
-      localStorage.setItem('isAdmin', email === 'admin@gmail.com');
+      const isAdmin = email === 'admin@gmail.com';
+      localStorage.setItem('isAdmin', isAdmin);
       console.log('Token accepted and stored:', token);
-      if (email === 'admin@gmail.com') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      setIsAuthenticated(true);
+      setIsAdmin(isAdmin);
+      navigate(isAdmin ? '/home' : '/');
     } else {
       alert('Napačno uporabniško ime ali geslo. Poskusite znova.');
     }

@@ -2,22 +2,29 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const chatRoutes = require("./routes/chat");
 const cors = require("cors");
+const chatRoutes = require("./routes/chat");
 
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3001;
+const MONGO_URI = process.env.MONGO_URI_CHAT;
+
+if (!process.env.SECRET_KEY || !process.env.OPENAI_API_KEY || !MONGO_URI) {
+  console.error("Missing required environment variables.");
+  process.exit(1);
+}
+
+// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/chat", chatRoutes);
 
-const PORT = process.env.PORT || 3001;
-const MONGO_URI = process.env.MONGO_URI_CHAT;
-
+// MongoDB Connection
 mongoose
-  .connect(MONGO_URI)
+  .connect(MONGO_URI, {})
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(PORT, () => {
@@ -27,3 +34,9 @@ mongoose
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
   });
+
+// Centralized error handling
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Internal Server Error" });
+});

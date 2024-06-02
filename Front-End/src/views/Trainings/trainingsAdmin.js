@@ -200,6 +200,10 @@ const TrainingsAdmin = () => {
                 <table>
                   <tbody>
                     <tr>
+                      <td>ID treninga:</td>
+                      <td>{training._id}</td>
+                    </tr>
+                    <tr>
                       <td>ID uporabnika:</td>
                       <td>{training.user_id}</td>
                     </tr>

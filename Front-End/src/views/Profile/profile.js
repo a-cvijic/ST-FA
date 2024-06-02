@@ -171,11 +171,6 @@ const Profile = () => {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/login');
-    };
-
     if (!profile) return <div>Loading...</div>;
 
     return (
@@ -232,7 +227,6 @@ const Profile = () => {
                     <button id="edit-profile-button" onClick={handleEditProfile}>Uredi profil</button>
                     <button id="change-password-button" onClick={() => setActiveForm('password')}>Spremeni geslo</button>
                     <button onClick={handleEnableMicrophone}>Omogoči mikrofon</button>
-                    <button onClick={handleLogout}>Odjava</button>
                 </div>
             )}
         </div>
