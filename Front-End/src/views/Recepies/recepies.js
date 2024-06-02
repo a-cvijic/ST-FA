@@ -5,12 +5,31 @@ import "./recipes.css";
 const baseURL = "http://localhost:3003";
 const authURL = "http://localhost:3010/auth";
 
+// Logic for notifications
+const requestNotificationPermission = () => {
+  Notification.requestPermission().then((permission) => {
+    console.log("Notification permission:", permission);
+    if (permission === "granted") {
+      console.log("Permission granted");
+    } else {
+      console.log("Permission not granted");
+    }
+  });
+};
+
+const showNotification = (title, message) => {
+  if (Notification.permission === "granted") {
+    new Notification(title, { body: message });
+  }
+};
+
 const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
-  const [newRecipe, setNewRecipe] = useState({ name: "", ingredients: "" });
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    requestNotificationPermission();
     const fetchData = async () => {
       let currentToken = token;
       const isValid = await checkTokenValidity(currentToken);
@@ -72,21 +91,6 @@ const Recipes = () => {
     }
   };
 
-  const handleAddRecipe = async () => {
-    try {
-      const response = await axios.post(`${baseURL}/recipes`, newRecipe, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      // Assuming response.data contains the newly created recipe object
-      setRecipes([...recipes, response.data.recipe]);
-      setNewRecipe({ name: "", ingredients: "" });
-    } catch (error) {
-      console.error("Error adding recipe:", error);
-    }
-  };
-
   const handleSubscribe = async () => {
     try {
       const subscription = await subscribeUser();
@@ -121,41 +125,59 @@ const Recipes = () => {
     }
   };
 
+  const handleFavoriteRecipe = async (recipeId) => {
+    try {
+      const response = await axios.post(
+        `${baseURL}/recipes/favorite/${recipeId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Recipe added to favorites:", response.data);
+      showNotification(
+        "Recipe Favorited",
+        "Recipe has been added to your favorites."
+      );
+    } catch (error) {
+      console.error("Error favoriting recipe:", error);
+    }
+  };
+
   return (
     <div id="recipes-container">
-      <div id="new-recipe-form">
-        <h2>Add a New Recipe</h2>
+      <div className="search-bar">
         <input
           type="text"
-          placeholder="Recipe Name"
-          value={newRecipe.name}
-          onChange={(e) => setNewRecipe({ ...newRecipe, name: e.target.value })}
+          placeholder="Search recipes..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <textarea
-          placeholder="Ingredients (comma separated)"
-          value={newRecipe.ingredients}
-          onChange={(e) =>
-            setNewRecipe({
-              ...newRecipe,
-              ingredients: e.target.value.split(","),
-            })
-          }
-        ></textarea>
-        <button onClick={handleAddRecipe}>Add Recipe</button>
+        <p style={{ float: "right", marginLeft: "20px" }}>🔎</p>
       </div>
       <div id="recipes-list">
         <h2>Recipes</h2>
-        {recipes.map((recipe) => (
-          <div key={recipe._id} className="recipe-card">
-            <h3>{recipe.name}</h3>
-            <p>
-              Ingredients:{" "}
-              {recipe.ingredients && recipe.ingredients.length > 0
-                ? recipe.ingredients.join(", ")
-                : "No ingredients listed"}
-            </p>
-          </div>
-        ))}
+        {recipes
+          .filter((recipe) =>
+            recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((recipe) => (
+            <div key={recipe._id} className="recipe-card">
+              <h3>{recipe.name}</h3>
+              <p>
+                Ingredients:{" "}
+                {recipe.ingredients && recipe.ingredients.length > 0
+                  ? recipe.ingredients.join(", ")
+                  : "No ingredients listed"}
+              </p>
+              <p>Calories: {recipe.calories}</p>
+              <button onClick={() => handleFavoriteRecipe(recipe._id)}>
+                Favorite
+              </button>
+            </div>
+          ))}
       </div>
       <button onClick={handleSubscribe}>Subscribe to Notifications</button>
     </div>
