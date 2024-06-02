@@ -7,13 +7,14 @@ nav {
     list-style: none;
     display: flex;
     justify-content: space-around;
+    align-items: center;
   }
   
-  nav ul li a {
+  nav ul li a .logout-button {
     color: #000000;
     text-decoration: none;
     font-family: 'Montserrat', sans-serif;
-    font-size: 130%;
+    font-size: 110%;
   }
   
 nav ul li a:hover {
@@ -21,5 +22,18 @@ nav ul li a:hover {
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
     transition: color 0.5s;
+}
+
+.logout-button {
+  border: none;
+  color: #000000;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 110%;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  font-weight: bold;
+  transition: color 0.5s;
 }
   

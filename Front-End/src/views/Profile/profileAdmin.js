@@ -214,12 +214,6 @@ const AdminPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('isAdmin');
-    navigate('/login');
-  };
-
   return (
     <div className={styles.adminContainer}>
       <div className={styles.addUserButtonContainer}>
@@ -229,7 +223,6 @@ const AdminPage = () => {
         <div className={styles.dropdownMenu}>
           <button onClick={() => { setAddMode(true); setEditMode(false); }}>Dodaj novega uporabnika</button>
           <button onClick={handleEnableMicrophone}>Omogoči mikrofon</button>
-          <button onClick={handleLogout}>Odjava</button>
         </div>
       )}
       {!editMode && !addMode && (
