@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './excercise_details.css';
 import gifs from './loadGifs.js';// potem kličem to komponento tukaj
+import LazyImage from './LazyImage';
 
 const baseURL = 'http://localhost:3000/exercises/';
 const authURL = 'http://localhost:3010/auth';
@@ -101,7 +102,7 @@ const ExercisesDetails = () => {
             <div>{exercise.description}</div>
           </div>
           <div className="exercise-detail-section centered-content">
-            {gifUrl ? <img src={gifUrl} alt="Exercise GIF" /> : <p>GIF not available</p>}
+            {gifUrl ? <LazyImage src={gifUrl} alt="Exercise GIF" /> : <p>GIF not available</p>}
           </div>
           <div className="exercise-detail-section">
             <div><strong>Gibanje:</strong></div>

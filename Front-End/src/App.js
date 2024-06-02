@@ -7,8 +7,8 @@ import Trainings from './views/Trainings/trainings';
 import TrainingDetails from './views/Trainings/trainingDetails';
 
 import Recipes from './views/Recepies/recepies';
-
 import Exercises from './views/Exercises/exercises';
+
 import ExercisesUser from './views/Exercises/exerciseuser';
 import ExercisesDetails from './views/Exercises/exercisesDetails';
 
@@ -38,28 +38,32 @@ const App = () => {
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('isAdmin');
+    setIsAuthenticated(false);
+    setIsAdmin(false);
+  };
+
   return (
     <Router>
       <div className="App">
-        <ConditionalNavbar isAuthenticated={isAuthenticated} />
+        <ConditionalNavbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
         <Routes>
-          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setIsAdmin={setIsAdmin} />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/*"
-            element={isAuthenticated ? <AuthenticatedRoutes isAdmin={isAdmin} /> : <Navigate to="/login" />}
-          />
+          <Route path="/*" element={isAuthenticated ? <AuthenticatedRoutes isAdmin={isAdmin} /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>
   );
 };
 
-const ConditionalNavbar = ({ isAuthenticated }) => {
+const ConditionalNavbar = ({ isAuthenticated, handleLogout }) => {
   const location = useLocation();
   const hideNavbarPaths = ['/login', '/register'];
 
-  return !hideNavbarPaths.includes(location.pathname) && isAuthenticated ? <Navbar /> : null;
+  return !hideNavbarPaths.includes(location.pathname) && isAuthenticated ? <Navbar handleLogout={handleLogout} /> : null;
 };
 
 const AuthenticatedRoutes = ({ isAdmin }) => (

@@ -216,6 +216,7 @@ const AdminPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('isAdmin');
     navigate('/login');
   };
 
