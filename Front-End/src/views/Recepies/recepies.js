@@ -208,14 +208,6 @@ const Recipes = () => {
   return (
     <div id="recipes-container">
       <div className="top-bar">
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search recipes..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
         <div className="voice-toggle">
           <label>
             <input
@@ -223,12 +215,19 @@ const Recipes = () => {
               checked={voiceEnabled}
               onChange={() => setVoiceEnabled(!voiceEnabled)}
             />
-            Voice Commands
+            Glasovne Komande
           </label>
+        </div>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Pretrazi recepte..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
       <div id="recipes-list">
-        <h2>Recipes</h2>
         {recipes
           .filter((recipe) =>
             recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -238,13 +237,18 @@ const Recipes = () => {
             <div key={recipe._id} className="recipe-card">
               <h3>{recipe.name}</h3>
               <p>
-                Ingredients:{" "}
+                Sastojci:{" "}
                 {recipe.ingredients && recipe.ingredients.length > 0
                   ? recipe.ingredients.join(", ")
                   : "No ingredients listed"}
               </p>
-              <p>Calories: {recipe.calories}</p>
-              <button onClick={() => handleToggleFavorite(recipe._id)}>
+              <p>Kalorije: {recipe.calories}</p>
+              <button
+                className={
+                  favorites.includes(recipe._id) ? "unfavorite" : "favorite"
+                }
+                onClick={() => handleToggleFavorite(recipe._id)}
+              >
                 {favorites.includes(recipe._id) ? "Unfavorite" : "Favorite"}
               </button>
             </div>

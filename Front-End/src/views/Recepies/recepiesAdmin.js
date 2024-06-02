@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./recipes.css";
 
+// Base URLs for the backend services
 const baseURL = "http://localhost:3003";
 const authURL = "http://localhost:3010/auth";
 
-// Logic for notifications
+// Request permission for notifications
 const requestNotificationPermission = () => {
   Notification.requestPermission().then((permission) => {
     console.log("Notification permission:", permission);
@@ -17,12 +18,14 @@ const requestNotificationPermission = () => {
   });
 };
 
+// Show a notification with the given title and message
 const showNotification = (title, message) => {
   if (Notification.permission === "granted") {
     new Notification(title, { body: message });
   }
 };
 
+// Subscribe the user to push notifications
 const subscribeUserToPush = async () => {
   if ("serviceWorker" in navigator) {
     try {
@@ -57,6 +60,7 @@ const AdminRecipes = () => {
   });
   const [editingRecipe, setEditingRecipe] = useState(null);
 
+  // Effect to fetch data and set up notifications on mount
   useEffect(() => {
     requestNotificationPermission();
     subscribeUserToPush();
@@ -82,6 +86,7 @@ const AdminRecipes = () => {
     fetchData();
   }, [token]);
 
+  // Check if the token is valid
   const checkTokenValidity = async (token) => {
     try {
       const response = await axios.get(`${authURL}/verify-token`, {
@@ -96,6 +101,7 @@ const AdminRecipes = () => {
     }
   };
 
+  // Refresh the token if it is expired or invalid
   const refreshToken = async (oldToken) => {
     try {
       const response = await axios.post(`${authURL}/refresh-token`, {
@@ -108,6 +114,7 @@ const AdminRecipes = () => {
     }
   };
 
+  // Fetch all recipes from the backend
   const getAllRecipes = async (token) => {
     try {
       const response = await axios.get(`${baseURL}/recipes`, {
@@ -122,6 +129,7 @@ const AdminRecipes = () => {
     }
   };
 
+  // Handle adding a new recipe
   const handleAddRecipe = async () => {
     try {
       const response = await axios.post(`${baseURL}/recipes`, newRecipe, {
@@ -137,6 +145,7 @@ const AdminRecipes = () => {
     }
   };
 
+  // Handle setting a recipe for editing
   const handleEditRecipe = (recipe) => {
     setEditingRecipe(recipe);
     setNewRecipe({
@@ -146,6 +155,7 @@ const AdminRecipes = () => {
     });
   };
 
+  // Handle updating an existing recipe
   const handleUpdateRecipe = async () => {
     try {
       const response = await axios.put(
@@ -174,6 +184,7 @@ const AdminRecipes = () => {
     }
   };
 
+  // Handle deleting a recipe
   const handleDeleteRecipe = async (recipeId) => {
     try {
       await axios.delete(`${baseURL}/recipes/${recipeId}`, {
@@ -190,17 +201,18 @@ const AdminRecipes = () => {
 
   return (
     <div id="recipes-container">
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search recipes..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <p style={{ float: "right", marginLeft: "20px" }}>🔎</p>
+      <div className="top-bar">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search recipes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <p>🔎</p>
+        </div>
       </div>
       <div id="recipes-list">
-        <h2>Recipes</h2>
         {recipes
           .filter((recipe) =>
             recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -215,8 +227,13 @@ const AdminRecipes = () => {
                   : "No ingredients listed"}
               </p>
               <p>Calories: {recipe.calories}</p>
-              <button onClick={() => handleEditRecipe(recipe)}>Edit</button>
-              <button onClick={() => handleDeleteRecipe(recipe._id)}>
+              <button className="edit" onClick={() => handleEditRecipe(recipe)}>
+                Edit
+              </button>
+              <button
+                className="delete"
+                onClick={() => handleDeleteRecipe(recipe._id)}
+              >
                 Delete
               </button>
             </div>
