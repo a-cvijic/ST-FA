@@ -23,38 +23,14 @@ const showNotification = (title, message) => {
   }
 };
 
-const subscribeUserToPush = async () => {
-  if ("serviceWorker" in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register(
-        "/service-worker.js"
-      );
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
-      });
-      await axios.post(`${baseURL}/subscribe`, { subscription });
-      console.log("Subscribed to push notifications");
-    } catch (error) {
-      console.error(
-        "Error during service worker registration or subscription:",
-        error
-      );
-    }
-  } else {
-    console.error("Service workers are not supported in this browser");
-  }
-};
-
 const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     requestNotificationPermission();
-    subscribeUserToPush();
-
     const fetchData = async () => {
       let currentToken = token;
       const isValid = await checkTokenValidity(currentToken);
@@ -71,6 +47,8 @@ const Recipes = () => {
       }
       const recipesData = await getAllRecipes(currentToken);
       setRecipes(recipesData);
+      const favoriteRecipes = await getFavoriteRecipes(currentToken);
+      setFavorites(favoriteRecipes.map((recipe) => recipe._id));
     };
 
     fetchData();
@@ -116,7 +94,21 @@ const Recipes = () => {
     }
   };
 
-  const handleFavoriteRecipe = async (recipeId) => {
+  const getFavoriteRecipes = async (token) => {
+    try {
+      const response = await axios.get(`${baseURL}/recipes/favorites`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching favorite recipes:", error);
+      return [];
+    }
+  };
+
+  const handleToggleFavorite = async (recipeId) => {
     try {
       const response = await axios.post(
         `${baseURL}/recipes/favorite/${recipeId}`,
@@ -127,29 +119,24 @@ const Recipes = () => {
           },
         }
       );
-      console.log("Recipe added to favorites:", response.data);
-
-      // Update the UI to reflect the favorite status
-      const updatedRecipes = recipes.map((recipe) =>
-        recipe._id === recipeId ? { ...recipe, favorite: true } : recipe
-      );
-      setRecipes(updatedRecipes);
-
-      showNotification(
-        "Recipe Favorited",
-        "Recipe has been added to your favorites."
-      );
+      if (favorites.includes(recipeId)) {
+        setFavorites(favorites.filter((id) => id !== recipeId));
+        showNotification(
+          "Recipe Unfavorited",
+          "Recipe has been removed from your favorites."
+        );
+      } else {
+        setFavorites([...favorites, recipeId]);
+        showNotification(
+          "Recipe Favorited",
+          "Recipe has been added to your favorites."
+        );
+      }
+      console.log(response.data.message);
     } catch (error) {
-      console.error("Error favoriting recipe:", error);
+      console.error("Error toggling favorite recipe:", error);
     }
   };
-
-  // Sort recipes to put favorites at the top
-  const sortedRecipes = [...recipes].sort((a, b) => {
-    if (a.favorite && !b.favorite) return -1;
-    if (!a.favorite && b.favorite) return 1;
-    return 0;
-  });
 
   return (
     <div id="recipes-container">
@@ -164,10 +151,11 @@ const Recipes = () => {
       </div>
       <div id="recipes-list">
         <h2>Recipes</h2>
-        {sortedRecipes
+        {recipes
           .filter((recipe) =>
             recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
+          .sort((a, b) => favorites.includes(b._id) - favorites.includes(a._id))
           .map((recipe) => (
             <div key={recipe._id} className="recipe-card">
               <h3>{recipe.name}</h3>
@@ -178,8 +166,8 @@ const Recipes = () => {
                   : "No ingredients listed"}
               </p>
               <p>Calories: {recipe.calories}</p>
-              <button onClick={() => handleFavoriteRecipe(recipe._id)}>
-                {recipe.favorite ? "Unfavorite" : "Favorite"}
+              <button onClick={() => handleToggleFavorite(recipe._id)}>
+                {favorites.includes(recipe._id) ? "Unfavorite" : "Favorite"}
               </button>
             </div>
           ))}
