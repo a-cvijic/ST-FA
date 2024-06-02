@@ -7,7 +7,6 @@ const secretKey = process.env.SECRET_KEY;
 
 const router = express.Router();
 
-// Initialize OpenAI instance
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -24,7 +23,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// Apply token authentication middleware to the chatbot route
+// Route to handle incoming chat messages
 router.post("/", authenticateToken, async (req, res) => {
   const { message } = req.body;
 
@@ -53,6 +52,22 @@ router.post("/", authenticateToken, async (req, res) => {
   } catch (error) {
     console.error("Error communicating with OpenAI:", error);
     res.status(500).json({ error: "Error communicating with OpenAI" });
+  }
+});
+
+// Route to get chat history
+router.get("/history", authenticateToken, async (req, res) => {
+  try {
+    const chatHistory = await ChatMessage.find().sort({ createdAt: -1 });
+    const formattedHistory = chatHistory.map((chat) => ({
+      message: chat.message,
+      response: chat.response,
+      messages: [{ message: chat.message, response: chat.response }],
+    }));
+    res.json(formattedHistory);
+  } catch (error) {
+    console.error("Error fetching chat history:", error);
+    res.status(500).json({ error: "Error fetching chat history" });
   }
 });
 

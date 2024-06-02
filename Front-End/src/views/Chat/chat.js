@@ -9,8 +9,10 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [chatHistory, setChatHistory] = useState([]);
   const messagesEndRef = useRef(null);
 
+  // Function to check token validity
   const checkTokenValidity = useCallback(async () => {
     try {
       const response = await axios.get(`${authURL}/verify-token`, {
@@ -25,6 +27,7 @@ const Chat = () => {
     }
   }, [token]);
 
+  // Function to refresh token
   const refreshToken = useCallback(async () => {
     try {
       const response = await axios.post(`${authURL}/refresh-token`, { token });
@@ -35,6 +38,7 @@ const Chat = () => {
     }
   }, [token]);
 
+  // Effect to fetch data and validate token on mount
   useEffect(() => {
     const fetchData = async () => {
       const isValid = await checkTokenValidity();
@@ -53,6 +57,26 @@ const Chat = () => {
     fetchData();
   }, [checkTokenValidity, refreshToken]);
 
+  // Effect to fetch chat history
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/history`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setChatHistory(response.data);
+      } catch (error) {
+        console.error("Error fetching chat history:", error);
+      }
+    };
+
+    fetchChatHistory();
+  }, [token]);
+  console.log("Token:", token);
+
+  // Function to handle sending message
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
@@ -85,33 +109,55 @@ const Chat = () => {
     }
   };
 
+  // Function to handle selecting a chat history item
+  const handleSelectHistory = (selectedMessages) => {
+    setMessages(selectedMessages);
+  };
+
+  // Effect to scroll to bottom of chat messages
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  // Function to scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div id="chat-container">
-      <div id="chat-messages">
-        {messages.map((msg, idx) => (
-          <div key={idx} className="chat-message">
-            <div className="user-message">{msg.message}</div>
-            <div className="bot-response">{msg.response}</div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+    <div id="chat-page">
+      <div id="sidebar">
+        <h2>Chat History</h2>
+        <ul>
+          {chatHistory.map((historyItem, index) => (
+            <li
+              key={index}
+              onClick={() => handleSelectHistory(historyItem.messages)}
+            >
+              {historyItem.message.substring(0, 20)}...
+            </li>
+          ))}
+        </ul>
       </div>
-      <div id="chat-input">
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Type your message here..."
-        />
-        <button onClick={handleSendMessage}>Send</button>
+      <div id="chat-container">
+        <div id="chat-messages">
+          {messages.map((msg, idx) => (
+            <div key={idx} className="chat-message">
+              <div className="user-message">{msg.message}</div>
+              <div className="bot-response">{msg.response}</div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        <div id="chat-input">
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder="Type your message here..."
+          />
+          <button onClick={handleSendMessage}>Send</button>
+        </div>
       </div>
     </div>
   );
