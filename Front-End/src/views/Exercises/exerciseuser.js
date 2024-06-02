@@ -185,6 +185,29 @@ const ExercisesUser = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const startPeriodicSync = () => {
+      function isOnline() {
+        return navigator.onLine;
+      }
+      function handleOnline() {
+        console.log('Connection established.');
+        synchronizeData(); // Synchronize data upon reconnection
+      }
+      function handleOffline() {
+        console.log('Connection lost.');
+      }
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+      setInterval(async () => {
+        console.log("Performing periodic synchronization...");
+        if (isOnline()) {
+          await verifyTokenAndFetchExercises();
+        } else {
+          console.log('No internet connection. Synchronization will be attempted upon reconnection.');
+        }
+      }, 15000); 
+    };
+  
     const fetchData = async () => {
       const currentToken = token;
       const userName = await getUsernameFromToken(currentToken);
@@ -192,7 +215,7 @@ const ExercisesUser = () => {
       setExercises(exercisesData);
       saveFavouritesToLocal(exercisesData);
     };
-
+  
     const verifyTokenAndFetchExercises = async () => {
       if (token) {
         const isValid = await checkTokenValidity(token);
@@ -211,8 +234,12 @@ const ExercisesUser = () => {
         console.error('No token found in local storage');
       }
     };
-
-    verifyTokenAndFetchExercises();
+    const synchronizeData = async () => {
+      await fetchData();
+    };
+  
+    startPeriodicSync();
+    fetchData();
     subscribeToFetchNotifications();
 
     const numberMap = {

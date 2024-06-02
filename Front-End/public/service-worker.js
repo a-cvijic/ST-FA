@@ -38,7 +38,8 @@ const urlsToCache = [
   '/src/views/Exercises/exercisesDetails.js',
   '/src/views/Exercises/exerciseuser.js',
   '/src/views/Exercises/loadGifs.js',
-  '/src/views/Exercises/gifs/*.gif'
+  '/src/views/Exercises/gifs/*.gif',
+  '/src/views/Exercises/LazyImage.js'
 ];
 
 self.addEventListener('install', event => {
