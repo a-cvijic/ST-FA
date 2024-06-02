@@ -23,6 +23,29 @@ const showNotification = (title, message) => {
   }
 };
 
+const subscribeUserToPush = async () => {
+  if ("serviceWorker" in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register(
+        "/service-worker.js"
+      );
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
+      });
+      await axios.post(`${baseURL}/subscribe`, { subscription });
+      console.log("Subscribed to push notifications");
+    } catch (error) {
+      console.error(
+        "Error during service worker registration or subscription:",
+        error
+      );
+    }
+  } else {
+    console.error("Service workers are not supported in this browser");
+  }
+};
+
 const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -30,6 +53,8 @@ const Recipes = () => {
 
   useEffect(() => {
     requestNotificationPermission();
+    subscribeUserToPush();
+
     const fetchData = async () => {
       let currentToken = token;
       const isValid = await checkTokenValidity(currentToken);
@@ -91,40 +116,6 @@ const Recipes = () => {
     }
   };
 
-  const handleSubscribe = async () => {
-    try {
-      const subscription = await subscribeUser();
-      if (subscription) {
-        await axios.post(`${baseURL}/subscribe`, { subscription });
-        console.log("Subscribed to push notifications");
-      }
-    } catch (error) {
-      console.error("Error subscribing to notifications:", error);
-    }
-  };
-
-  const subscribeUser = async () => {
-    if ("serviceWorker" in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register(
-          "/service-worker.js"
-        );
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: process.env.REACT_APP_VAPID_PUBLIC_KEY,
-        });
-        return subscription;
-      } catch (error) {
-        console.error(
-          "Error during service worker registration or subscription:",
-          error
-        );
-      }
-    } else {
-      console.error("Service workers are not supported in this browser");
-    }
-  };
-
   const handleFavoriteRecipe = async (recipeId) => {
     try {
       const response = await axios.post(
@@ -137,6 +128,13 @@ const Recipes = () => {
         }
       );
       console.log("Recipe added to favorites:", response.data);
+
+      // Update the UI to reflect the favorite status
+      const updatedRecipes = recipes.map((recipe) =>
+        recipe._id === recipeId ? { ...recipe, favorite: true } : recipe
+      );
+      setRecipes(updatedRecipes);
+
       showNotification(
         "Recipe Favorited",
         "Recipe has been added to your favorites."
@@ -145,6 +143,13 @@ const Recipes = () => {
       console.error("Error favoriting recipe:", error);
     }
   };
+
+  // Sort recipes to put favorites at the top
+  const sortedRecipes = [...recipes].sort((a, b) => {
+    if (a.favorite && !b.favorite) return -1;
+    if (!a.favorite && b.favorite) return 1;
+    return 0;
+  });
 
   return (
     <div id="recipes-container">
@@ -159,7 +164,7 @@ const Recipes = () => {
       </div>
       <div id="recipes-list">
         <h2>Recipes</h2>
-        {recipes
+        {sortedRecipes
           .filter((recipe) =>
             recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
@@ -174,12 +179,11 @@ const Recipes = () => {
               </p>
               <p>Calories: {recipe.calories}</p>
               <button onClick={() => handleFavoriteRecipe(recipe._id)}>
-                Favorite
+                {recipe.favorite ? "Unfavorite" : "Favorite"}
               </button>
             </div>
           ))}
       </div>
-      <button onClick={handleSubscribe}>Subscribe to Notifications</button>
     </div>
   );
 };

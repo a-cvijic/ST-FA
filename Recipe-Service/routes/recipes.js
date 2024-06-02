@@ -81,7 +81,15 @@ router.get("/recipes", authenticateToken, async (req, res) => {
   try {
     console.log("Fetching all recipes");
     const recipes = await Recipe.find();
-    res.json(recipes);
+    const userFavorites = await RecipeUser.find({ userId: req.user.userId });
+    const userFavoriteIds = userFavorites.map((fav) => fav._id.toString());
+
+    const recipesWithFavorites = recipes.map((recipe) => ({
+      ...recipe.toObject(),
+      favorite: userFavoriteIds.includes(recipe._id.toString()),
+    }));
+
+    res.json(recipesWithFavorites);
   } catch (err) {
     console.error("Failed to retrieve recipes", err);
     res.status(500).json({ error: "Failed to retrieve recipes" });
