@@ -10,7 +10,7 @@ const LazyImage = ({ src, alt }) => {
     const handleIntersection = (entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          setImageSrc(src);  // Set the src when the image is in the viewport
+          setImageSrc(src);
           observer.unobserve(img);
           console.log("Lazy load slike:", src);
         }
