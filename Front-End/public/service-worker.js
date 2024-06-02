@@ -7,7 +7,14 @@ const urlsToCache = [
   //public
   '/index.html',
   '/manifest.json',
-  '/favicon.ico',
+
+  //icons
+  'icons/logo_72.png',
+  'icons/logo_128.png',
+  'icons/logo_144.png',
+  'icons/logo_192.png',
+  'icons/logo_256.png',
+  'icons/logo_512.png',
 
   //src
   '/src/index.js',
@@ -18,6 +25,18 @@ const urlsToCache = [
 
   //server
   '../server.js',
+
+  //components
+  '/src/components/Navbar/navbar.css',
+  '/src/components/Navbar/navbar.js',
+  '/src/components/Footer/footer.css',
+  '/src/components/Footer/footer.js',
+
+  //home-page
+  '/src/views/Home/home.css',
+  '/src/views/Home/home.js',
+  '/src/views/Home/homeAdmin.css',
+  '/src/views/Home/homeAdmin.js',
 
   //users-service
   '/src/views/Login/login.css',
@@ -39,7 +58,17 @@ const urlsToCache = [
   '/src/views/Exercises/exerciseuser.js',
   '/src/views/Exercises/loadGifs.js',
   '/src/views/Exercises/gifs/*.gif',
-  '/src/views/Exercises/LazyImage.js'
+  '/src/views/Exercises/LazyImage.js',
+
+  //trainings-service
+  '/src/views/Trainings/trainings.css',
+  '/src/views/Trainings/trainings.js',
+  '/src/views/Trainings/trainingsAdmin.css',
+  '/src/views/Trainings/trainingsAdmin.js',
+  '/src/views/Trainings/trainingsDetails.css',
+  '/src/views/Trainings/trainingsDetails.js',
+
+  //TODO: recipe-service
 ];
 
 self.addEventListener('install', event => {
