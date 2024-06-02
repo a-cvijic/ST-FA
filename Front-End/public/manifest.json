@@ -1,7 +1,7 @@
 {
-  "name": "Excercise app",
+  "name": "Fitness app",
   "short_name": "Simple app",
-  "description": "CRUD applications for excercises",
+  "description": "Simple fitness aplication",
   "icons": [
       {
         "src": "icons/manifest-icon-192.maskable.png",
