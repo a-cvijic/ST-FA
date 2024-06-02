@@ -77,6 +77,17 @@ router.post("/recipes", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/recipes/favorites", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const favoriteRecipes = await RecipeUser.find({ userId });
+    res.json(favoriteRecipes);
+  } catch (err) {
+    console.error("Failed to get favorite recipes", err);
+    res.status(500).json({ error: "Failed to get favorite recipes" });
+  }
+});
+
 router.get("/recipes", authenticateToken, async (req, res) => {
   try {
     console.log("Fetching all recipes");
@@ -145,18 +156,19 @@ router.delete("/recipes/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Add a recipe to user's favorites
+// Toggle favorite status of a recipe for a user
 router.post("/recipes/favorite/:id", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const recipeId = req.params.id;
 
-    // Check if the recipe already exists for this user
-    const existingRecipe = await RecipeUser.findOne({ _id: recipeId, userId });
-    if (existingRecipe) {
-      return res
-        .status(400)
-        .send({ message: "Recipe is already added to favorites" });
+    const existingFavorite = await RecipeUser.findOne({
+      _id: recipeId,
+      userId,
+    });
+    if (existingFavorite) {
+      await RecipeUser.findByIdAndDelete(existingFavorite._id);
+      return res.status(200).send({ message: "Recipe removed from favorites" });
     }
 
     const recipe = await Recipe.findById(recipeId);
@@ -170,20 +182,8 @@ router.post("/recipes/favorite/:id", authenticateToken, async (req, res) => {
       .status(201)
       .json({ message: "Recipe added to favorites", favoriteRecipe });
   } catch (err) {
-    console.error("Failed to add recipe to favorites", err);
-    res.status(500).json({ error: "Failed to add recipe to favorites" });
-  }
-});
-
-// Get user's favorite recipes
-router.get("/recipes/favorites", authenticateToken, async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    const favoriteRecipes = await RecipeUser.find({ userId });
-    res.json(favoriteRecipes);
-  } catch (err) {
-    console.error("Failed to get favorite recipes", err);
-    res.status(500).json({ error: "Failed to get favorite recipes" });
+    console.error("Failed to toggle favorite recipe", err);
+    res.status(500).json({ error: "Failed to toggle favorite recipe" });
   }
 });
 
