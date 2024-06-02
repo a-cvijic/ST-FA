@@ -3,16 +3,42 @@ const CACHE_NAME = 'fitness-app-v1';
 // TODO: Add list of files to cache here
 const urlsToCache = [
   '/',
+
+  //public
   '/index.html',
-  '/style.css',
-  '/app.js',
-  '/icons/logo_72.png',
-  '/icons/logo_128.png',
-  '/icons/logo_144.png',
-  '/icons/logo_192.png',
-  '/icons/logo_256.png',
-  '/icons/logo_512.png',
-  '/manifest.json'
+  '/manifest.json',
+  '/favicon.ico',
+
+  //src
+  '/src/index.js',
+  '/src/App.js',
+  '/src/App.css',
+  '/src/App.test.js',
+  '/src/index.css',
+
+  //server
+  '../server.js',
+
+  //users-service
+  '/src/views/Login/login.css',
+  '/src/views/Login/login.js',
+  '/src/views/Register/register.css',
+  '/src/views/Register/register.js',
+  '/src/views/Profile/profile.css',
+  '/src/views/Profile/profile.js',
+  '/src/views/Profile/profileAdmin.js',
+  '/src/views/Profile/profileAdmin.css',
+
+  //exercise-service
+  '/src/views/Exercises/excercise_details.css',
+  '/src/views/Exercises/exercises.css',
+  '/src/views/Exercises/exercises.js',
+  '/src/views/Exercises/exercisesAdmin.css',
+  '/src/views/Exercises/exercisesAdmin.js',
+  '/src/views/Exercises/exercisesDetails.js',
+  '/src/views/Exercises/exerciseuser.js',
+  '/src/views/Exercises/loadGifs.js',
+  '/src/views/Exercises/gifs/*.gif'
 ];
 
 self.addEventListener('install', event => {

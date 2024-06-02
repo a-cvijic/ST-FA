@@ -28,6 +28,7 @@ const AdminPage = () => {
     height: '',
     weight: ''
   });
+  const [showSettings, setShowSettings] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -213,12 +214,23 @@ const AdminPage = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
     <div className={styles.adminContainer}>
       <div className={styles.addUserButtonContainer}>
-        <button onClick={() => { setAddMode(true); setEditMode(false); }}>Dodaj novega uporabnika</button>
-        <button onClick={handleEnableMicrophone}>Omogoči mikrofon</button>
       </div>
+      <button className={styles.settingsButton} onClick={() => setShowSettings(!showSettings)}>Nastavitve</button> {}
+      {showSettings && (
+        <div className={styles.dropdownMenu}>
+          <button onClick={() => { setAddMode(true); setEditMode(false); }}>Dodaj novega uporabnika</button>
+          <button onClick={handleEnableMicrophone}>Omogoči mikrofon</button>
+          <button onClick={handleLogout}>Odjava</button>
+        </div>
+      )}
       {!editMode && !addMode && (
         <div className={styles.userList}>
           <h2>Vsi uporabniki</h2>
