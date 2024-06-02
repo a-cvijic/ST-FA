@@ -77,6 +77,17 @@ router.post("/recipes", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/recipes/favorites", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const favoriteRecipes = await RecipeUser.find({ userId });
+    res.json(favoriteRecipes);
+  } catch (err) {
+    console.error("Failed to get favorite recipes", err);
+    res.status(500).json({ error: "Failed to get favorite recipes" });
+  }
+});
+
 router.get("/recipes", authenticateToken, async (req, res) => {
   try {
     console.log("Fetching all recipes");
@@ -151,9 +162,12 @@ router.post("/recipes/favorite/:id", authenticateToken, async (req, res) => {
     const userId = req.user.userId;
     const recipeId = req.params.id;
 
-    const existingRecipe = await RecipeUser.findOne({ _id: recipeId, userId });
-    if (existingRecipe) {
-      await RecipeUser.findByIdAndDelete(existingRecipe._id);
+    const existingFavorite = await RecipeUser.findOne({
+      _id: recipeId,
+      userId,
+    });
+    if (existingFavorite) {
+      await RecipeUser.findByIdAndDelete(existingFavorite._id);
       return res.status(200).send({ message: "Recipe removed from favorites" });
     }
 
@@ -170,18 +184,6 @@ router.post("/recipes/favorite/:id", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error("Failed to toggle favorite recipe", err);
     res.status(500).json({ error: "Failed to toggle favorite recipe" });
-  }
-});
-
-// Get user's favorite recipes
-router.get("/recipes/favorites", authenticateToken, async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    const favoriteRecipes = await RecipeUser.find({ userId });
-    res.json(favoriteRecipes);
-  } catch (err) {
-    console.error("Failed to get favorite recipes", err);
-    res.status(500).json({ error: "Failed to get favorite recipes" });
   }
 });
 
