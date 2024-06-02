@@ -205,7 +205,7 @@ const AdminRecipes = () => {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Search recipes..."
+            placeholder="Pretrazi recepte..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -221,34 +221,34 @@ const AdminRecipes = () => {
             <div key={recipe._id} className="recipe-card">
               <h3>{recipe.name}</h3>
               <p>
-                Ingredients:{" "}
+                Sastojci:{" "}
                 {recipe.ingredients && recipe.ingredients.length > 0
                   ? recipe.ingredients.join(", ")
                   : "No ingredients listed"}
               </p>
-              <p>Calories: {recipe.calories}</p>
+              <p>Kalorije: {recipe.calories}</p>
               <button className="edit" onClick={() => handleEditRecipe(recipe)}>
-                Edit
+                Uredi
               </button>
               <button
                 className="delete"
                 onClick={() => handleDeleteRecipe(recipe._id)}
               >
-                Delete
+                Izbrisi
               </button>
             </div>
           ))}
       </div>
       <div id="new-recipe-form">
-        <h2>{editingRecipe ? "Edit Recipe" : "Add a New Recipe"}</h2>
+        <h2>{editingRecipe ? "Uredi Recept" : "Dodaj novi recept"}</h2>
         <input
           type="text"
-          placeholder="Recipe Name"
+          placeholder="Ime Recepta"
           value={newRecipe.name}
           onChange={(e) => setNewRecipe({ ...newRecipe, name: e.target.value })}
         />
         <textarea
-          placeholder="Ingredients (comma separated)"
+          placeholder="Sastojci (comma separated)"
           value={newRecipe.ingredients}
           onChange={(e) =>
             setNewRecipe({
@@ -259,7 +259,7 @@ const AdminRecipes = () => {
         ></textarea>
         <input
           type="number"
-          placeholder="Calories"
+          placeholder="Kalorije"
           value={newRecipe.calories}
           onChange={(e) =>
             setNewRecipe({ ...newRecipe, calories: e.target.value })

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import annyang from "annyang";
 import "./recipes.css";
@@ -56,17 +56,6 @@ const Recipes = () => {
 
     fetchData();
   }, [token]);
-
-  // Setup or teardown voice commands when voiceEnabled changes
-  useEffect(() => {
-    if (voiceEnabled) {
-      setupVoiceCommands();
-    } else {
-      if (annyang) {
-        annyang.abort();
-      }
-    }
-  }, [voiceEnabled]);
 
   // Check token validity
   const checkTokenValidity = async (token) => {
@@ -127,38 +116,41 @@ const Recipes = () => {
   };
 
   // Toggle favorite status of a recipe
-  const handleToggleFavorite = async (recipeId) => {
-    try {
-      const response = await axios.post(
-        `${baseURL}/recipes/favorite/${recipeId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  const handleToggleFavorite = useCallback(
+    async (recipeId) => {
+      try {
+        const response = await axios.post(
+          `${baseURL}/recipes/favorite/${recipeId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (favorites.includes(recipeId)) {
+          setFavorites(favorites.filter((id) => id !== recipeId));
+          showNotification(
+            "Recipe Unfavorited",
+            "Recipe has been removed from your favorites."
+          );
+        } else {
+          setFavorites([...favorites, recipeId]);
+          showNotification(
+            "Recipe Favorited",
+            "Recipe has been added to your favorites."
+          );
         }
-      );
-      if (favorites.includes(recipeId)) {
-        setFavorites(favorites.filter((id) => id !== recipeId));
-        showNotification(
-          "Recipe Unfavorited",
-          "Recipe has been removed from your favorites."
-        );
-      } else {
-        setFavorites([...favorites, recipeId]);
-        showNotification(
-          "Recipe Favorited",
-          "Recipe has been added to your favorites."
-        );
+        console.log(response.data.message);
+      } catch (error) {
+        console.error("Error toggling favorite recipe:", error);
       }
-      console.log(response.data.message);
-    } catch (error) {
-      console.error("Error toggling favorite recipe:", error);
-    }
-  };
+    },
+    [favorites, token]
+  );
 
   // Setup voice commands using annyang
-  const setupVoiceCommands = () => {
+  const setupVoiceCommands = useCallback(() => {
     if (annyang) {
       const commands = {
         "search for *term": (term) => {
@@ -196,7 +188,18 @@ const Recipes = () => {
       annyang.addCommands(commands);
       annyang.start();
     }
-  };
+  }, [recipes, handleToggleFavorite]);
+
+  // Setup or teardown voice commands when voiceEnabled changes
+  useEffect(() => {
+    if (voiceEnabled) {
+      setupVoiceCommands();
+    } else {
+      if (annyang) {
+        annyang.abort();
+      }
+    }
+  }, [voiceEnabled, setupVoiceCommands]);
 
   // Text-to-speech function
   const speak = (text) => {
@@ -225,6 +228,7 @@ const Recipes = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          <p>🔎</p>
         </div>
       </div>
       <div id="recipes-list">
