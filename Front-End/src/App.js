@@ -39,11 +39,14 @@ const App = () => {
   }, []);
 
   const handleLogout = () => {
+    const confirmed = window.confirm('Ali ste prepričani da se želite odjaviti?');
+      if (confirmed) {
     localStorage.removeItem('token');
     localStorage.removeItem('isAdmin');
     setIsAuthenticated(false);
     setIsAdmin(false);
-  };
+  }
+};
 
   return (
     <Router>

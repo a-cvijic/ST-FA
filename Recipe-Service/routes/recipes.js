@@ -1,12 +1,14 @@
 const express = require("express");
 const Recipe = require("../models/Recipe");
-const Subscription = require("../models/Subscription");
-const webpush = require("web-push");
+const RecipeUser = require("../models/RecipeUser");
 const jwt = require("jsonwebtoken");
+const webpush = require("web-push");
 require("dotenv").config();
 
 const router = express.Router();
 const secretKey = process.env.SECRET_KEY;
+const publicKey = process.env.VAPID_PUBLIC_KEY;
+const privateKey = process.env.VAPID_PRIVATE_KEY;
 
 // Middleware to verify JWT
 function authenticateToken(req, res, next) {
@@ -28,19 +30,20 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// Vapid keys for web push notifications
+webpush.setVapidDetails("mailto:example@example.com", publicKey, privateKey);
+
+// In-memory subscriptions storage
+let subscriptions = [];
+
 // Send a push notification
 async function sendPushNotification(payload) {
   const notificationPayload = JSON.stringify(payload);
 
   try {
-    const subscriptions = await Subscription.find();
     subscriptions.forEach((subscription) => {
-      const pushSubscription = {
-        endpoint: subscription.endpoint,
-        keys: subscription.keys,
-      };
       webpush
-        .sendNotification(pushSubscription, notificationPayload)
+        .sendNotification(subscription, notificationPayload)
         .catch((err) => {
           console.error("Failed to send push notification", err);
         });
@@ -51,20 +54,13 @@ async function sendPushNotification(payload) {
 }
 
 // Subscribe to push notifications
-router.post("/subscribe", async (req, res) => {
-  try {
-    console.log("Subscription request body:", req.body);
-    const subscription = new Subscription(req.body.subscription);
-    await subscription.save();
-    res.status(201).json({ message: "Subscription added successfully" });
-  } catch (err) {
-    console.error("Failed to store subscription", err);
-    res.status(500).json({ error: "Failed to store subscription" });
-  }
+router.post("/subscribe", (req, res) => {
+  const subscription = req.body;
+  subscriptions.push(subscription);
+  res.status(201).json({ message: "Subscription added successfully" });
 });
 
 // CRUD operations for recipes
-// Create a new recipe
 router.post("/recipes", authenticateToken, async (req, res) => {
   try {
     console.log("Create recipe request body:", req.body);
@@ -74,14 +70,24 @@ router.post("/recipes", authenticateToken, async (req, res) => {
     sendPushNotification({
       title: "New Recipe Added",
       body: "A new recipe has been added to your collection!",
-    }); // Send notification
+    });
   } catch (err) {
     console.error("Failed to create recipe", err);
     res.status(500).json({ error: "Failed to create recipe" });
   }
 });
 
-// Read all recipes
+router.get("/recipes/favorites", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const favoriteRecipes = await RecipeUser.find({ userId });
+    res.json(favoriteRecipes);
+  } catch (err) {
+    console.error("Failed to get favorite recipes", err);
+    res.status(500).json({ error: "Failed to get favorite recipes" });
+  }
+});
+
 router.get("/recipes", authenticateToken, async (req, res) => {
   try {
     console.log("Fetching all recipes");
@@ -93,7 +99,6 @@ router.get("/recipes", authenticateToken, async (req, res) => {
   }
 });
 
-// Read a specific recipe by ID
 router.get("/recipes/:id", authenticateToken, async (req, res) => {
   try {
     console.log("Fetching recipe with ID:", req.params.id);
@@ -108,7 +113,6 @@ router.get("/recipes/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Update a recipe by ID
 router.put("/recipes/:id", authenticateToken, async (req, res) => {
   try {
     console.log(
@@ -134,7 +138,6 @@ router.put("/recipes/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Delete a recipe by ID
 router.delete("/recipes/:id", authenticateToken, async (req, res) => {
   try {
     console.log("Deleting recipe with ID:", req.params.id);
@@ -150,6 +153,37 @@ router.delete("/recipes/:id", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error("Failed to delete recipe", err);
     res.status(500).json({ error: "Failed to delete recipe" });
+  }
+});
+
+// Toggle favorite status of a recipe for a user
+router.post("/recipes/favorite/:id", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const recipeId = req.params.id;
+
+    const existingFavorite = await RecipeUser.findOne({
+      _id: recipeId,
+      userId,
+    });
+    if (existingFavorite) {
+      await RecipeUser.findByIdAndDelete(existingFavorite._id);
+      return res.status(200).send({ message: "Recipe removed from favorites" });
+    }
+
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    const favoriteRecipe = new RecipeUser({ ...recipe.toObject(), userId });
+    await favoriteRecipe.save();
+    res
+      .status(201)
+      .json({ message: "Recipe added to favorites", favoriteRecipe });
+  } catch (err) {
+    console.error("Failed to toggle favorite recipe", err);
+    res.status(500).json({ error: "Failed to toggle favorite recipe" });
   }
 });
 
