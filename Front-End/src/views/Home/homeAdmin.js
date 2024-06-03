@@ -6,7 +6,7 @@ import './homeAdmin.css';
 const authURL = 'http://localhost:3010/auth';
 const trainingsURL = 'http://localhost:3004/trainings';
 const exercisesURL = 'http://localhost:3000/exercises';
-const recipesURL = 'http://localhost:3002/recipes';
+const recipesURL = 'http://localhost:3003/recipes';
 const usersURL = 'http://localhost:3010/auth';
 
 const HomeAdmin = () => {
